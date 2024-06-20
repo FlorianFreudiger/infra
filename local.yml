@@ -1,0 +1,5 @@
+---
+- name: Apply to localhost
+  hosts: localhost
+  roles:
+    - role: common

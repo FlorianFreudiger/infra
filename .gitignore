@@ -1,0 +1,8 @@
+# Ansible
+*.retry
+inventory.ini
+
+# IDE files
+.idea/
+.vs/
+.vscode/
