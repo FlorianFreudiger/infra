@@ -3,3 +3,4 @@
   hosts: localhost
   roles:
     - role: common
+    - role: kopia
