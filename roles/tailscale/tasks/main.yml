@@ -1,3 +1,0 @@
----
-- name: Install tailscale
-  ansible.builtin.include_tasks: install.yml

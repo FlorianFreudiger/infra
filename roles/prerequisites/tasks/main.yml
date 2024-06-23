@@ -1,9 +1,11 @@
 ---
+# Update apt cache once instead of in every apt task
 - name: Update apt cache
   ansible.builtin.apt:
     update_cache: true
   become: true
 
+# Required for the deb822_repository module
 - name: Install python-debian module
   ansible.builtin.apt:
     pkg:

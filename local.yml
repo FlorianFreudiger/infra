@@ -4,5 +4,7 @@
   roles:
     - role: prerequisites
     - role: common
-    - role: tailscale
+    - role: artis3n.tailscale
+      vars:
+        tailscale_up_skip: true
     - role: kopia
