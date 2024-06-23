@@ -2,5 +2,7 @@
 - name: Apply to localhost
   hosts: localhost
   roles:
+    - role: prerequisites
     - role: common
+    - role: tailscale
     - role: kopia

@@ -1,7 +1,7 @@
 ---
 - name: Update packages
   ansible.builtin.apt:
-    update_cache: true
+    # cache already updated in prerequisites
     upgrade: "safe"
     autoremove: true
   become: true
