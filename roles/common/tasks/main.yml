@@ -5,3 +5,15 @@
     upgrade: "safe"
     autoremove: true
   become: true
+
+- name: Install essential packages
+  ansible.builtin.apt:
+    pkg:
+      - git
+      - htop
+      - tmux
+      - screen
+      - 7zip
+      - ncdu
+      - stow
+  become: true

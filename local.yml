@@ -8,3 +8,5 @@
       vars:
         tailscale_up_skip: true
     - role: kopia
+    - role: nickjj.docker
+      become: true
