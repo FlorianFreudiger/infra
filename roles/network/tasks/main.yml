@@ -1,0 +1,21 @@
+---
+# Increase UDP buffer size for QUIC, see
+# https://github.com/quic-go/quic-go/wiki/UDP-Buffer-Sizes
+- name: Increase maximum UDP buffer size - Read
+  ansible.posix.sysctl:
+    name: net.core.rmem_max
+    value: 16777216 # 16MB
+    reload: false # Don't reload yet
+  become: true
+- name: Increase maximum UDP buffer size - Write
+  ansible.posix.sysctl:
+    name: net.core.wmem_max
+    value: 16777216 # 16MB
+    reload: true # Reload now
+  become: true
+
+- name: Install tailscale
+  ansible.builtin.include_role:
+    name: artis3n.tailscale
+  vars:
+    tailscale_up_skip: true

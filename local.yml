@@ -3,9 +3,7 @@
   hosts: localhost
   roles:
     - role: common
-    - role: artis3n.tailscale
-      vars:
-        tailscale_up_skip: true
+    - role: network
     - role: kopia
     - role: nickjj.docker
       become: true
