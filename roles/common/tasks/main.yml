@@ -1,9 +1,9 @@
 ---
 - name: Update packages
   ansible.builtin.apt:
-    # cache already updated in prerequisites
     upgrade: "safe"
     autoremove: true
+    cache_valid_time: 3600
   become: true
 
 - name: Install essential packages
