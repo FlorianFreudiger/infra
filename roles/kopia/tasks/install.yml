@@ -6,7 +6,6 @@
     suites: stable
     components: main
     signed_by: https://kopia.io/signing-key
-  become: true
   register: kopia_repo
 
 - name: Install kopia package
@@ -15,4 +14,3 @@
     pkg:
       - kopia
     state: present
-  become: true

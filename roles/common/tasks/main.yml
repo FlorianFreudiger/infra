@@ -4,7 +4,6 @@
     upgrade: "safe"
     autoremove: true
     cache_valid_time: 3600
-  become: true
 
 - name: Install essential packages
   ansible.builtin.apt:
@@ -16,4 +15,3 @@
       - 7zip
       - ncdu
       - stow
-  become: true
