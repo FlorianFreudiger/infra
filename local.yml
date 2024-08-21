@@ -7,4 +7,4 @@
     - role: network
     - role: kopia
     - role: nickjj.docker
-      become: true
+    - role: security

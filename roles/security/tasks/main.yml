@@ -1,0 +1,50 @@
+---
+
+# Auditing
+
+- name: Install lynis security auditing tool
+  ansible.builtin.apt:
+    name: lynis
+    state: present
+    cache_valid_time: 3600
+
+# Firewall
+
+# Note default UFW rules (incoming, etc.) will be overwritten by os_hardening
+- name: Allow SSH in UFW
+  community.general.ufw:
+    rule: allow
+    port: ssh
+
+- name: Enable UFW
+  community.general.ufw:
+    state: enabled
+
+# Hardening
+
+- name: Check if running in WSL
+  ansible.builtin.set_fact:
+    wsl: "{{ 'wsl' in ansible_facts['virtualization_tech_guest'] | default([]) }}"
+
+- name: Harden OS - Disable stuff that breaks in WSL
+  ansible.builtin.set_fact:
+    os_env_user_paths: [] # Clear in WSL since it breaks "mimize-access" task
+  when: wsl
+
+- name: Harden OS
+  ansible.builtin.include_role:
+    name: devsec.hardening.os_hardening
+  vars: # noqa: var-naming[no-role-prefix]
+    os_sysctl_enabled: false # Disable sysctl hardening to not mess with Docker
+    os_user_pw_ageing: false # Disable password ageing for non-root users
+    os_security_auto_logout: 0 # Disable auto-logout (already disabled by default)
+    os_selinux_enabled: false # Disable SELinux
+    os_mnt_dev_enabled: false # Disable modifying /dev mountpoint as it breaks "mount -a"
+
+# Note this will also install ssh server but with password login disabled!
+- name: Harden and install SSH
+  ansible.builtin.include_role:
+    name: devsec.hardening.ssh_hardening
+  vars: # noqa: var-naming[no-role-prefix]
+    ssh_client_password_login: true # Client: Keep password login
+    ssh_print_last_log: true # Server: Keep printing last login information
