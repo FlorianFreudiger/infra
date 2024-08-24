@@ -2,6 +2,9 @@
 - name: Install security auditing tools
   ansible.builtin.include_tasks: auditing.yml
 
+- name: Enable automatic security updates
+  ansible.builtin.include_tasks: autoupdates.yml
+
 - name: Configure Firewall
   ansible.builtin.include_tasks: firewall.yml
 
