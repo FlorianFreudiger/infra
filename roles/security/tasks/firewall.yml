@@ -1,0 +1,11 @@
+---
+# Note default UFW rules (incoming, etc.) will be overwritten by os_hardening in hardening.yml
+
+- name: Allow SSH in UFW
+  community.general.ufw:
+    rule: allow
+    port: ssh
+
+- name: Enable UFW
+  community.general.ufw:
+    state: enabled

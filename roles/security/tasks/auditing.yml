@@ -1,0 +1,6 @@
+---
+- name: Install lynis security auditing tool
+  ansible.builtin.apt:
+    name: lynis
+    state: present
+    cache_valid_time: 3600
