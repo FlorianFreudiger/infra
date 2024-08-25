@@ -1,6 +1,12 @@
 ---
 # Note default UFW rules (incoming, etc.) will be overwritten by os_hardening in hardening.yml
 
+- name: Ensure UFW is installed
+  ansible.builtin.apt:
+    name: ufw
+    state: present
+    cache_valid_time: 3600
+
 - name: Allow SSH in UFW
   community.general.ufw:
     rule: allow

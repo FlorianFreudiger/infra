@@ -12,6 +12,5 @@
       - htop
       - tmux
       - screen
-      - 7zip
       - ncdu
       - stow
