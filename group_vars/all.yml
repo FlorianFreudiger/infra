@@ -1,0 +1,3 @@
+---
+# Only update apt cache if older than 1 hour
+apt_cache_valid_time: 3600

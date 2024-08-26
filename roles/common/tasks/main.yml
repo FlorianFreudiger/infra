@@ -3,7 +3,7 @@
   ansible.builtin.apt:
     upgrade: "safe"
     autoremove: true
-    cache_valid_time: 3600
+    cache_valid_time: "{{ apt_cache_valid_time }}"
 
 - name: Install essential packages
   ansible.builtin.apt:
