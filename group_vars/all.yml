@@ -1,3 +1,16 @@
 ---
 # Only update apt cache if older than 1 hour
 apt_cache_valid_time: 3600
+
+
+## Tailscale
+
+# Define these somewhere else, like in your gitignored inventory file
+# tailscale_key: ""
+# tailscale_tags: [] # Omit "tag:" prefix
+
+# Tailscale up arguments
+tailscale_args: ""
+
+# Don't register node as ephermeral
+tailscale_oauth_ephemeral: false
