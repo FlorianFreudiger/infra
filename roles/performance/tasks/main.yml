@@ -1,0 +1,3 @@
+---
+- name: Setup or disable zram
+  ansible.builtin.include_tasks: zram.yml

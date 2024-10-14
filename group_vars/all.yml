@@ -14,3 +14,13 @@ tailscale_args: ""
 
 # Don't register node as ephermeral
 tailscale_oauth_ephemeral: false
+
+
+## Zram
+# Disabled if zram_percent is 0 or less
+
+# Percentage of total memory to allocate to zram
+zram_percent: 20
+
+# Compression algorithm to use
+zram_algorithm: lzo-rle

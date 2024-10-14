@@ -1,0 +1,47 @@
+---
+# If enabled, try to load the zram kernel module to check if it's available
+- name: Load zram kernel module to check availability
+  community.general.modprobe:
+    name: zram
+  when: zram_percent > 0
+  register: zram_modprobe_result
+  ignore_errors: true
+
+# If it is not, set zram to be disabled to cleanup service if needed
+- name: Skip zram setup if zram kernel module is not available
+  ansible.builtin.set_fact:
+    zram_percent: 0
+  when: zram_percent > 0 and zram_modprobe_result.failed
+
+# zramswap will start automatically after installation, so configure it beforehand
+- name: Configure zram
+  ansible.builtin.template:
+    src: zramswap.j2
+    dest: /etc/default/zramswap
+    owner: root
+    group: root
+    mode: "0644"
+  when: zram_percent > 0
+  register: zram_config_result
+
+- name: Install zram utilities
+  ansible.builtin.apt:
+    pkg:
+      - util-linux # For zramctl tool
+      - zram-tools
+
+    state: present
+    cache_valid_time: "{{ apt_cache_valid_time }}"
+  when: zram_percent > 0
+
+- name: Check services if we need to disable zramswap service
+  ansible.builtin.service_facts:
+  # Only needed if services haven't been gathered and zramswap is disabled
+  when: ansible_facts.services is not defined and not zram_percent > 0
+
+- name: Configure zramswap service
+  ansible.builtin.systemd_service:
+    name: zramswap
+    enabled: "{{ zram_percent > 0 }}"
+    state: "{{ ('restarted' if zram_config_result.changed else 'started') if zram_percent > 0 else 'stopped' }}"
+  when: zram_percent > 0 or 'zramswap.service' in ansible_facts.services
