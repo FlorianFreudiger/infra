@@ -10,7 +10,7 @@ apt_cache_valid_time: 3600
 # tailscale_tags: [] # Omit "tag:" prefix
 
 # Tailscale up arguments
-tailscale_args: ""
+tailscale_args: "--accept-routes"
 
 # Don't register node as ephermeral
 tailscale_oauth_ephemeral: false
