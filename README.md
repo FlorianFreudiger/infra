@@ -12,3 +12,4 @@ ansible-galaxy install -r requirements.yml --force
 
 Largely sourced from and inspired by:
 - https://github.com/notthebee/infra
+- https://github.com/alf149/ansible-role-crowdsec

@@ -10,3 +10,7 @@
 
 - name: Harden system and components
   ansible.builtin.include_tasks: hardening.yml
+
+- name: Setup CrowdSec
+  ansible.builtin.include_tasks: crowdsec.yml
+  when: setup_crowdsec_override | default(setup_crowdsec)

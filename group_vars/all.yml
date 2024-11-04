@@ -24,3 +24,9 @@ zram_percent: 20
 
 # Compression algorithm to use
 zram_algorithm: lzo-rle
+
+
+## CrowdSec
+# CrowsSec won't be setup by default, override for public facing servers
+# by setting setup_crowdsec_override for specific hosts/groups in inventory
+setup_crowdsec: false
