@@ -1,12 +1,15 @@
 ---
-- name: Add Ubuntu Pro ESM to unattended upgrade patterns
-  ansible.builtin.set_fact:
-    unattended_origins_patterns:
-      - 'origin=Ubuntu,archive=${distro_codename}-security,label=Ubuntu' # Default
-      - 'origin=UbuntuESM,archive=${distro_codename}-infra-security,label=UbuntuESM'
-      - 'origin=UbuntuESMApps,archive=${distro_codename}-apps-security,label=UbuntuESMApps'
-  when: ansible_distribution == 'Ubuntu'
-
 - name: Setup unattended upgrades
   ansible.builtin.include_role:
     name: hifis.toolkit.unattended_upgrades
+  vars: # noqa: var-naming[no-role-prefix]
+    unattended_origins_patterns:
+      # Default patterns
+      - 'origin=Debian,codename=${distro_codename},label=Debian-Security'
+      - 'origin=Debian,codename=${distro_codename}-security,label=Debian-Security'
+      - 'origin=Ubuntu,archive=${distro_codename}-security,label=Ubuntu'
+      # Ubuntu Pro ESM patterns
+      - 'origin=UbuntuESM,archive=${distro_codename}-infra-security,label=UbuntuESM'
+      - 'origin=UbuntuESMApps,archive=${distro_codename}-apps-security,label=UbuntuESMApps'
+      # CrowdSec pattern
+      - 'origin=packagecloud.io/crowdsec/crowdsec,archive=${distro_codename},label=crowdsec'
