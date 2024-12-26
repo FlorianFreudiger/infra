@@ -3,6 +3,9 @@
 # or somewhere else that is gitignored
 # Private variables are commented out here for reference
 
+# In this playbook, you can override any variable by defining an override_x variable
+# for any x variable. For example, to override the variable "test", define "override_test".
+
 # Only update apt cache if older than 1 hour
 apt_cache_valid_time: 3600
 
@@ -30,7 +33,7 @@ zram_algorithm: lzo-rle
 
 ## CrowdSec
 # CrowsSec won't be setup by default, override for public facing servers
-# by setting setup_crowdsec_override for specific hosts/groups in inventory
+# by setting override_setup_crowdsec for specific hosts/groups in inventory
 setup_crowdsec: false
 
 
@@ -84,5 +87,5 @@ kopia_targets:
 kopia_schedule: "*-*-* 04:00:00"
 
 # Kopia before and after backup commands (optional)
-# kopia_before_backup: "echo 'Starting backup'"
-# kopia_after_backup: "echo 'Backup complete'"
+kopia_before_backup: "echo 'Starting backup'"
+kopia_after_backup: "echo 'Backup complete'"

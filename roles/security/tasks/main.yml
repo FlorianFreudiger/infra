@@ -13,4 +13,4 @@
 
 - name: Setup CrowdSec
   ansible.builtin.include_tasks: crowdsec.yml
-  when: setup_crowdsec_override | default(setup_crowdsec) | bool
+  when: setup_crowdsec | bool

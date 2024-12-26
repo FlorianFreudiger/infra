@@ -5,3 +5,11 @@
     pkg:
       - python3-debian
     state: present
+
+# This allows you to override variables of higher precedence
+# by defining an override_x variable for any x variable
+- name: Override variables
+  ansible.builtin.set_fact: # noqa: var-naming[no-jinja]
+    "{{ item.key | regex_replace('^override_', '') }}": "{{ item.value }}"
+  loop: "{{ vars | dict2items | selectattr('key', 'match', '^override_') }}"
+  no_log: true # Don't log since variables may contain sensitive information
