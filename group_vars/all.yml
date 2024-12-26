@@ -1,11 +1,13 @@
 ---
+# Only set public variables here, private variables should be set in inventory
+# or somewhere else that is gitignored
+# Private variables are commented out here for reference
+
 # Only update apt cache if older than 1 hour
 apt_cache_valid_time: 3600
 
 
 ## Tailscale
-
-# Define these somewhere else, like in your gitignored inventory file
 # tailscale_key: ""
 # tailscale_tags: [] # Omit "tag:" prefix
 
@@ -30,3 +32,57 @@ zram_algorithm: lzo-rle
 # CrowsSec won't be setup by default, override for public facing servers
 # by setting setup_crowdsec_override for specific hosts/groups in inventory
 setup_crowdsec: false
+
+
+## Kopia
+# Kopia server, omit "https://" prefix:
+# kopia_server: "backup:51515"
+# Fingerprint of kopia server's certificate:
+# kopia_fingerprint: ""
+
+# Kopia password, user is always "root"
+# kopia_password: ""
+# kopia_override_hostname: "" (optional)
+
+# Check if TCP connection to kopia server can be established before configuring
+kopia_test_connection: true
+
+# What to backup
+kopia_targets:
+  - path: "/home"
+    # Add .kopiaignore file at the root of the path (optional)
+    add_kopiaignore: |
+      # Global directories and files
+      .cache
+      *.tmp
+      *.bak
+      [Dd]esktop.ini
+
+      # Home directories
+      */.gradle
+      */.konan
+      */.m2
+      */.npm
+      */.vscode-server
+      */.vscode-remote-containers
+      */.local/lib
+      */.local/share/Trash
+      */go
+      */snap
+  - path: "/etc"
+    add_kopiaignore: |
+      crowdsec/hub
+      crowdsec/patterns
+      crowdsec/parsers
+      crowdsec/notifications
+      *.bak
+  - path: "/srv"
+    add_kopiaignore: |
+      .cache
+
+# Kopia backup schedule in systemd timer format
+kopia_schedule: "*-*-* 04:00:00"
+
+# Kopia before and after backup commands (optional)
+# kopia_before_backup: "echo 'Starting backup'"
+# kopia_after_backup: "echo 'Backup complete'"

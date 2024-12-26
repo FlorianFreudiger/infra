@@ -1,0 +1,9 @@
+[Unit]
+Description=Automatic kopia backup
+
+[Timer]
+OnCalendar={{ kopia_schedule }}
+Persistent=true
+
+[Install]
+WantedBy=timers.target

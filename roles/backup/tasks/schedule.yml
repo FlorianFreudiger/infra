@@ -1,0 +1,27 @@
+---
+- name: Add kopia backup script
+  ansible.builtin.template:
+    src: "kopia-backup.sh.j2"
+    dest: "~root/kopia-backup.sh"
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: Add kopia-auto-backup service and timer
+  ansible.builtin.template:
+    src: "{{ item }}.j2"
+    dest: "/etc/systemd/system/{{ item }}"
+    owner: root
+    group: root
+    mode: "0644"
+  loop:
+    - "kopia-auto-backup.timer"
+    - "kopia-auto-backup.service"
+  notify: Reload systemd daemon
+
+- name: Enable and start kopia-auto-backup timer
+  ansible.builtin.systemd:
+    name: "kopia-auto-backup.timer"
+    enabled: true
+    state: started
+    no_block: true

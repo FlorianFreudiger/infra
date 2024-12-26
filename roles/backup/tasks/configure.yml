@@ -1,0 +1,60 @@
+---
+- name: Check if kopia_server is defined
+  ansible.builtin.fail:
+    msg: "kopia_server is not set correctly, please set it to \"host:port\""
+  when: kopia_server is not defined or (kopia_server | split(':')) | length != 2
+
+- name: Test kopia server connection
+  ansible.builtin.command:
+    argv:
+      - "nc"
+      - "-zv"
+      - "-w"
+      - "1"
+      - "{{ kopia_server_host }}"
+      - "{{ kopia_server_port }}"
+  vars:
+    kopia_server_host: "{{ (kopia_server | split(':'))[0] }}"
+    kopia_server_port: "{{ (kopia_server | split(':'))[1] }}"
+  changed_when: false
+  when: kopia_test_connection
+
+- name: Connect kopia server repository
+  ansible.builtin.command:
+    argv: "{{ argv | select | list }}"
+    creates: "~/.config/kopia/repository.config"
+  vars:
+    argv:
+      - "kopia"
+      - "repository"
+      - "connect"
+      - "server"
+      - "--url"
+      - "https://{{ kopia_server }}"
+      - "--server-cert-fingerprint"
+      - "{{ kopia_fingerprint }}"
+      - "--password"
+      - "{{ kopia_password }}"
+      - "{{ '--override-hostname' if kopia_override_hostname is defined else '' }}"
+      - "{{ kopia_override_hostname if kopia_override_hostname is defined else '' }}"
+      - "--no-enable-actions"
+  register: kopia_repository_connect
+  no_log: true # Don't log password
+  ignore_errors: true # Ignore error so we can print the error message in the next task
+
+- name: Print kopia repository connect error if failed
+  ansible.builtin.fail:
+    msg: "{{ kopia_repository_connect.stderr }}"
+  when: kopia_repository_connect.failed
+
+- name: Add .kopiaignore files
+  ansible.builtin.template:
+    src: ".kopiaignore.j2"
+    dest: "{{ item.path }}/.kopiaignore"
+    owner: root
+    group: root
+    mode: "0644"
+  vars:
+    kopiaignore_content: "{{ item.add_kopiaignore }}"
+  when: item.add_kopiaignore is defined
+  loop: "{{ kopia_targets }}"

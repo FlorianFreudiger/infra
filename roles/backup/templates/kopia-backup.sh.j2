@@ -1,0 +1,9 @@
+#!/bin/bash
+
+{{ kopia_before_backup if kopia_before_backup is defined else '' }}
+
+{% for target in kopia_targets %}
+kopia snapshot create {{ target.path }}
+{% endfor %}
+
+{{ kopia_after_backup if kopia_after_backup is defined else '' }}
