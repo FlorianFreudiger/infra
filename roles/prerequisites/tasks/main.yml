@@ -1,9 +1,9 @@
 ---
-# Required for the deb822_repository module
-- name: Install python-debian module
+- name: Install required packages for playbook execution
   ansible.builtin.apt:
     pkg:
-      - python3-debian
+      - python3-debian  # Required for the deb822_repository module
+      - netcat  # Required for connection testing
     state: present
 
 # This allows you to override variables of higher precedence
