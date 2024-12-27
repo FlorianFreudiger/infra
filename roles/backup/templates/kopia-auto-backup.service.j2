@@ -3,7 +3,7 @@ Description=Automated Kopia Backup Service
 Requires=network-online.target
 After=network-online.target
 
-{% if kopia_server.startswith('100.') %}
+{% if kopia_server.startswith('100.') or kopia_server.startswith('https://100.') %}
 # Kopia server only reachable via tailscale, so wait for tailscaled
 Requires=tailscaled.service
 After=tailscaled.service

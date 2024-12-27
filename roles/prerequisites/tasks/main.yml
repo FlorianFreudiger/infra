@@ -3,7 +3,6 @@
   ansible.builtin.apt:
     pkg:
       - python3-debian  # Required for the deb822_repository module
-      - netcat  # Required for connection testing
     state: present
 
 # This allows you to override variables of higher precedence

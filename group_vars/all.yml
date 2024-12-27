@@ -38,17 +38,14 @@ setup_crowdsec: false
 
 
 ## Kopia
-# Kopia server, omit "https://" prefix:
-# kopia_server: "backup:51515"
+# Kopia server, with "https://" prefix:
+# kopia_server: "https://backup:51515"
 # Fingerprint of kopia server's certificate:
 # kopia_fingerprint: ""
 
 # Kopia password, user is always "root"
 # kopia_password: ""
 # kopia_override_hostname: "" (optional)
-
-# Check if TCP connection to kopia server can be established before configuring
-kopia_test_connection: true
 
 # What to backup
 kopia_targets:
