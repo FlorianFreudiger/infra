@@ -3,7 +3,7 @@
   ansible.builtin.deb822_repository:
     name: CrowdSec
     uris: "https://packagecloud.io/crowdsec/crowdsec/{{ ansible_distribution | lower }}"
-    suites: "{{ ansible_distribution_release | lower }}"
+    suites: "{{ crowdsec_apt_suite | default(ansible_distribution_release) | lower }}"
     components: main
     signed_by: https://packagecloud.io/crowdsec/crowdsec/gpgkey
   register: crowdsec_repo

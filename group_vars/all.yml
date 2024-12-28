@@ -36,6 +36,11 @@ zram_algorithm: lzo-rle
 # by setting override_setup_crowdsec for specific hosts/groups in inventory
 setup_crowdsec: false
 
+# Override crowdsec apt repository suite (optional)
+# This is for when CrowdSec does not yet provide packages for a new release
+# See https://packagecloud.io/crowdsec/crowdsec for available suites
+# crowdsec_apt_suite: "jammy"
+
 
 ## Kopia
 # Kopia server, with "https://" prefix:

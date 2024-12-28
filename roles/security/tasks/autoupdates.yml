@@ -3,7 +3,8 @@
   ansible.builtin.include_role:
     name: hifis.toolkit.unattended_upgrades
   vars: # noqa: var-naming[no-role-prefix]
-    unattended_origins_patterns:
+    unattended_origins_patterns: "{{ patterns | select | list }}"
+    patterns:
       # Default patterns
       - 'origin=Debian,codename=${distro_codename},label=Debian-Security'
       - 'origin=Debian,codename=${distro_codename}-security,label=Debian-Security'
@@ -13,3 +14,5 @@
       - 'origin=UbuntuESMApps,archive=${distro_codename}-apps-security,label=UbuntuESMApps'
       # CrowdSec pattern
       - 'origin=packagecloud.io/crowdsec/crowdsec,archive=${distro_codename},label=crowdsec'
+      - "{{ ('origin=packagecloud.io/crowdsec/crowdsec,archive=' + crowdsec_apt_suite +
+        ',label=crowdsec') if crowdsec_apt_suite is defined else '' }}"
