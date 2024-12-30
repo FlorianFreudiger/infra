@@ -1,3 +1,9 @@
 ---
 - name: Setup or disable zram
   ansible.builtin.include_tasks: zram.yml
+
+# Allow overcommitting memory to avoid jemalloc issues and valkey warning about it
+- name: Allow overcommitting memory
+  ansible.posix.sysctl:
+    name: vm.overcommit_memory
+    value: 1
