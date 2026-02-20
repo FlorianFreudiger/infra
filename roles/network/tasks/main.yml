@@ -14,8 +14,8 @@
 
 - name: Install tailscale
   ansible.builtin.include_role:
-    name: artis3n.tailscale
-  vars:
+    name: artis3n.tailscale.machine
+  vars: # noqa: var-naming[no-role-prefix]
     tailscale_up_skip: "{{ tailscale_authkey is not defined or tailscale_authkey == '' }}"
     # tailscale_authkey and tailscale_tags are defined in inventory
     # Other variables like tailscale_args are defined in group_vars

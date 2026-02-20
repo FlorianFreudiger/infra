@@ -18,6 +18,7 @@
     os_selinux_enabled: false # Disable SELinux
     os_mnt_dev_enabled: false # Disable modifying /dev mountpoint as it breaks "mount -a"
     hidepid_option: 0 # Do not hide processes from other users
+    os_auditd_enabled: false # Disable auditd, doesn't work on laptop WSL
 
 # Note this will also install ssh server but with password login disabled!
 - name: Harden and install SSH
