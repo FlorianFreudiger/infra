@@ -9,6 +9,10 @@
         "flakes"
       ];
 
+      time.timeZone = "Europe/Berlin";
+
+      # Packages:
+
       environment.systemPackages = with pkgs; [
         # For editing nix config
         nixd

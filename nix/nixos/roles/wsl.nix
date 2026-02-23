@@ -5,10 +5,13 @@
     {
       imports = [
         self.nixosModules.essential
+        self.nixosModules.home-manager
         inputs.nixos-wsl.nixosModules.wsl
       ];
 
       wsl.enable = true;
-      wsl.defaultUser = "nixos";
+      wsl.defaultUser = "turtle";
+      # Integrate with Docker Desktop running on Windows, does not install docker in NixOS
+      wsl.docker-desktop.enable = true;
     };
 }

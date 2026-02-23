@@ -32,7 +32,9 @@
 
       imports = [
         (inputs.import-tree ./nixos)
-        #(inputs.import-tree ./home-manager)
+
+        inputs.home-manager.flakeModules.home-manager
+        (inputs.import-tree ./home-manager)
       ];
     };
 }
