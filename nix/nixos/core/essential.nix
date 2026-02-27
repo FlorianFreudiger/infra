@@ -1,13 +1,34 @@
-{ ... }:
+{ inputs, ... }:
 {
   flake.nixosModules.essential =
     { pkgs, ... }:
     {
-      # Enable nix-command and flakes
-      nix.settings.experimental-features = [
-        "nix-command"
-        "flakes"
-      ];
+      nix = {
+        settings = {
+          # Enable nix-command and flakes
+          experimental-features = [
+            "nix-command"
+            "flakes"
+          ];
+
+          # De-duplicate files in store via hardlinks
+          auto-optimise-store = true;
+        };
+
+        gc = {
+          automatic = true;
+          dates = "daily";
+          options = "--delete-older-than 30d";
+        };
+      };
+
+      system.autoUpgrade = {
+        enable = true;
+        flake = inputs.self.outPath;
+        dates = "03:00";
+        randomizedDelaySec = "15min";
+        allowReboot = false;
+      };
 
       time.timeZone = "Europe/Berlin";
 
@@ -21,9 +42,15 @@
         # For general use
         wget
         ncdu
+        fastfetch
+        jq
+
+        # Administration
+        kmod
       ];
 
       programs.nix-ld.enable = true;
+      programs.nh.enable = true;
       programs.git = {
         enable = true;
         lfs.enable = true;

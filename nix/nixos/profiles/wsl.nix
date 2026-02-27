@@ -6,6 +6,9 @@
       imports = [
         self.nixosModules.essential
         self.nixosModules.home-manager
+        self.nixosModules.ssh
+        self.nixosModules.secrets
+        self.nixosModules.network
         inputs.nixos-wsl.nixosModules.wsl
       ];
 
