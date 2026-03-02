@@ -1,6 +1,7 @@
 # Ansible
 *.retry
 inventory.*
+.ansible
 
 # IDE files
 .idea/

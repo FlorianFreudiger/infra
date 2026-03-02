@@ -15,6 +15,7 @@
           home-manager.users.turtle = {
             imports = [
               self.homeModules.default
+              self.homeModules.dev-all
             ];
 
             home.username = "turtle";
