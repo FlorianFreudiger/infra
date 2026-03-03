@@ -16,3 +16,8 @@ result-*
 
 # Ignore automatically generated direnv output
 .direnv
+
+
+## WSL kernel build outputs
+wsl/out
+wsl/wsl-kernel

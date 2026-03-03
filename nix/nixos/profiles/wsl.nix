@@ -9,6 +9,7 @@
         self.nixosModules.ssh
         self.nixosModules.secrets
         self.nixosModules.network
+        self.nixosModules.performance
         self.nixosModules.security
         inputs.nixos-wsl.nixosModules.wsl
       ];
