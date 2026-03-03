@@ -1,6 +1,6 @@
 { ... }:
 {
-  flake.nixosModules.network =
+  flake.nixosModules.containers =
     {
       config,
       lib,

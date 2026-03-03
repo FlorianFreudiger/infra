@@ -11,6 +11,7 @@
         self.nixosModules.network
         self.nixosModules.performance
         self.nixosModules.security
+        self.nixosModules.backup
         inputs.nixos-wsl.nixosModules.wsl
       ];
 

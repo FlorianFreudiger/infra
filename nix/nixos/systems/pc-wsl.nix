@@ -8,9 +8,15 @@
 
       # Host specific configuration
       (
-        { ... }:
+        { config, ... }:
         {
           networking.hostName = "pc-wsl";
+
+          # Kopia credentials
+          age.secrets.kopia-password-pc-wsl = {
+            rekeyFile = self + "/secrets/master/kopia-password-pc-wsl.age";
+          };
+          services.kopia.backups.daily.passwordFile = config.age.secrets.kopia-password-pc-wsl.path;
 
           home-manager.users.turtle = {
             imports = [

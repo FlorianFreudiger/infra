@@ -219,6 +219,23 @@
         "type": "github"
       }
     },
+    "nixpkgs-kopia": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1772211205,
+        "narHash": "sha256-jN0Dcac+7TjLFOM6BzLMDlMBZudzHgA8CmC4XuzNH9A=",
+        "owner": "efficacy38",
+        "repo": "nixpkgs",
+        "rev": "7ae5970634a00b96ee407e9e426641bdfc182a25",
+        "type": "github"
+      },
+      "original": {
+        "owner": "efficacy38",
+        "repo": "nixpkgs",
+        "rev": "7ae5970634a00b96ee407e9e426641bdfc182a25",
+        "type": "github"
+      }
+    },
     "nixpkgs-unstable": {
       "locked": {
         "lastModified": 1772433332,
@@ -267,6 +284,7 @@
         "import-tree": "import-tree",
         "nixos-wsl": "nixos-wsl",
         "nixpkgs": "nixpkgs",
+        "nixpkgs-kopia": "nixpkgs-kopia",
         "nixpkgs-unstable": "nixpkgs-unstable"
       }
     },

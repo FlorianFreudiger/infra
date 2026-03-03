@@ -36,6 +36,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.flake-parts.follows = "flake-parts";
     };
+
+    nixpkgs-kopia = {
+      url = "github:efficacy38/nixpkgs/7ae5970634a00b96ee407e9e426641bdfc182a25";
+      flake = false;
+    };
   };
 
   outputs =
