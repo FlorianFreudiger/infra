@@ -20,5 +20,12 @@
       age.secrets.tailscale-authkey = {
         rekeyFile = self + "/secrets/master/tailscale-authkey.age";
       };
+
+      # Increase UDP buffer sizes for QUIC
+      # See https://github.com/quic-go/quic-go/wiki/UDP-Buffer-Sizes
+      boot.kernel.sysctl = {
+        "net.core.rmem_max" = 16777216; # 16 MiB
+        "net.core.wmem_max" = 16777216; # 16 MiB
+      };
     };
 }
