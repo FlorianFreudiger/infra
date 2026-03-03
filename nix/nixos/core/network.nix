@@ -3,6 +3,9 @@
   flake.nixosModules.network =
     { config, ... }:
     {
+      # Use nftables instead of iptables
+      networking.nftables.enable = true;
+
       services.tailscale = {
         enable = true;
         extraUpFlags = [
