@@ -10,6 +10,19 @@
       (
         { config, ... }:
         {
+          system.stateVersion = "25.11";
+          home-manager.users.turtle = {
+            home.stateVersion = "25.11";
+
+            imports = [
+              self.homeModules.default
+              self.homeModules.dev-all
+            ];
+
+            home.username = "turtle";
+            home.homeDirectory = "/home/turtle";
+          };
+
           networking.hostName = "pc-wsl";
 
           # Kopia credentials
@@ -18,18 +31,9 @@
           };
           services.kopia.backups.daily.passwordFile = config.age.secrets.kopia-password-pc-wsl.path;
 
-          home-manager.users.turtle = {
-            imports = [
-              self.homeModules.default
-              self.homeModules.dev-all
-            ];
-
-            home.username = "turtle";
-            home.homeDirectory = "/home/turtle";
-
-            home.stateVersion = "25.11";
-          };
-          system.stateVersion = "25.11";
+          # Use system for building aarch64 image via binary emulation
+          #boot.binfmt.emulatedSystems = [ "aarch64-linux" ];
+          #wsl.interop.register = true;
         }
       )
     ];
