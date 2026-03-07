@@ -1,4 +1,4 @@
-{ inputs, ... }:
+{ ... }:
 {
   flake.nixosModules.essential =
     { pkgs, ... }:
@@ -14,20 +14,6 @@
           # De-duplicate files in store via hardlinks
           auto-optimise-store = true;
         };
-
-        gc = {
-          automatic = true;
-          dates = "daily";
-          options = "--delete-older-than 30d";
-        };
-      };
-
-      system.autoUpgrade = {
-        enable = true;
-        flake = inputs.self.outPath;
-        dates = "03:00";
-        randomizedDelaySec = "15min";
-        allowReboot = false;
       };
 
       time.timeZone = "Europe/Berlin";
@@ -35,10 +21,6 @@
       # Packages:
 
       environment.systemPackages = with pkgs; [
-        # For editing nix config
-        nixd
-        nixfmt
-
         # For general use
         wget
         ncdu

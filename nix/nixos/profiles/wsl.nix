@@ -4,17 +4,19 @@
     { ... }:
     {
       imports = [
-        self.nixosModules.essential
-        self.nixosModules.users
-        self.nixosModules.home-manager
-        self.nixosModules.ssh
-        self.nixosModules.secrets
-        self.nixosModules.network
-        self.nixosModules.performance
-        self.nixosModules.security
+        inputs.nixos-wsl.nixosModules.wsl
+
         self.nixosModules.backup
         # no containers module as docker is passed through from Windows
-        inputs.nixos-wsl.nixosModules.wsl
+        self.nixosModules.essential
+        self.nixosModules.home-manager
+        self.nixosModules.maintenance
+        self.nixosModules.network
+        self.nixosModules.performance
+        self.nixosModules.secrets
+        self.nixosModules.security
+        self.nixosModules.ssh
+        self.nixosModules.users
       ];
 
       wsl.enable = true;

@@ -11,6 +11,7 @@
         { config, ... }:
         {
           system.stateVersion = "25.11";
+          networking.hostName = "pc-wsl";
           home-manager.users.turtle = {
             home.stateVersion = "25.11";
 
@@ -22,8 +23,6 @@
             home.username = "turtle";
             home.homeDirectory = "/home/turtle";
           };
-
-          networking.hostName = "pc-wsl";
 
           # Kopia credentials
           age.secrets.kopia-password-pc-wsl = {

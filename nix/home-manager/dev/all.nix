@@ -5,6 +5,7 @@
     {
       imports = [
         self.homeModules.dev-langs-ansible
+        self.homeModules.dev-langs-nix
         self.homeModules.dev-langs-python
       ];
     };
