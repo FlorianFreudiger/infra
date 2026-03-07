@@ -6,6 +6,14 @@
       # Import specific role
       self.nixosModules.wsl
 
+      # Host facts
+      (
+        { ... }:
+        {
+          infra.hostFacts.memoryGiB = 32;
+        }
+      )
+
       # Host specific configuration
       (
         { config, ... }:
@@ -31,8 +39,8 @@
           services.kopia.backups.daily.passwordFile = config.age.secrets.kopia-password-pc-wsl.path;
 
           # Use system for building aarch64 image via binary emulation
-          #boot.binfmt.emulatedSystems = [ "aarch64-linux" ];
-          #wsl.interop.register = true;
+          boot.binfmt.emulatedSystems = [ "aarch64-linux" ];
+          wsl.interop.register = true;
         }
       )
     ];

@@ -1,3 +1,42 @@
+## Deploy to new host
+
+1. Build sd image and flash to storage media
+2. Boot host and wait for it to be reachable via ssh
+3. Define new host in `nixos/systems/<hostname>.nix`, use `nixos-generate-config --show-hardware-config` on new host to get hardware-configuration
+4. Rekey relevant secrets via host-key:
+
+```bash
+# Your machine
+mkdir -p ./secrets/hosts/<hostname>
+scp <user>@<host>:/etc/ssh/ssh_host_ed25519_key.pub ./secrets/hosts/<hostname>
+git -C ./secrets add hosts/<hostname>
+nix develop
+agenix rekey
+git -C ./secrets add rekeyed/<hostname>
+```
+
+5. Copy over nixos configuration to host:
+
+While we could also deploy remotely, this way we have a local copy and auto-upgrades work
+
+```bash
+# Your machine
+ssh <user>@<host> sudo chown <user> /etc/nixos
+rsync -a --progress -e ssh --exclude='result*' --exclude='*.img' ./ <user>@<host>:/etc/nixos
+```
+
+6. Connect to host and switch to the new configuration:
+
+```bash
+# New host
+cd /etc/nixos
+tmux
+nh os switch . --hostname <hostname> <--ask>
+```
+
+7. Restart system to apply boot changes: `sudo reboot`
+
+
 ## Building an aarch64 SD bootstrap image
 
 There are multiple ways to build the aarch64 SD bootstrap image below.

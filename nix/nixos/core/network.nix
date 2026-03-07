@@ -11,6 +11,8 @@
         extraUpFlags = [
           "--accept-routes"
           "--advertise-tags=tag:test"
+          # Set hostname manually since Tailscale might be applied before specified hostname
+          ("--hostname=" + config.networking.hostName)
         ];
         extraSetFlags = [
           "--accept-routes"

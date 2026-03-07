@@ -1,0 +1,63 @@
+{ inputs, self, ... }:
+{
+  flake.nixosConfigurations.blueberry = inputs.nixpkgs.lib.nixosSystem {
+    system = "aarch64-linux";
+    modules = [
+      # Import specific role
+      self.nixosModules.server
+
+      # Host facts
+      (
+        { ... }:
+        {
+          infra.hostFacts.memoryGiB = 1;
+        }
+      )
+
+      # Host specific configuration
+      (
+        { config, ... }:
+        {
+          system.stateVersion = "25.11";
+          networking.hostName = "blueberry";
+
+          # Kopia credentials
+          age.secrets.kopia-password-blueberry = {
+            rekeyFile = self + "/secrets/master/kopia-password-blueberry.age";
+          };
+          services.kopia.backups.daily.passwordFile = config.age.secrets.kopia-password-blueberry.path;
+
+          # Use extlinux bootloader instead of GRUB
+          boot.loader.grub.enable = false;
+          boot.loader.generic-extlinux-compatible.enable = true;
+
+          # networking.networkmanager.enable = true;
+        }
+      )
+
+      # Host specific hardware-configuration
+      (
+        { lib, modulesPath, ... }:
+        {
+          imports = [
+            (modulesPath + "/installer/scan/not-detected.nix")
+          ];
+
+          boot.initrd.availableKernelModules = [ ];
+          boot.initrd.kernelModules = [ ];
+          boot.kernelModules = [ ];
+          boot.extraModulePackages = [ ];
+
+          fileSystems."/" = {
+            device = "/dev/disk/by-uuid/44444444-4444-4444-8888-888888888888";
+            fsType = "ext4";
+          };
+
+          swapDevices = [ ];
+
+          nixpkgs.hostPlatform = lib.mkDefault "aarch64-linux";
+        }
+      )
+    ];
+  };
+}
