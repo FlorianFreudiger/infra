@@ -30,11 +30,28 @@ rsync -a --progress -e ssh --exclude='result*' --exclude='*.img' ./ <user>@<host
 ```bash
 # New host
 cd /etc/nixos
-tmux
+# Recommended to use terminal multiplexer like tmux to allow detaching from long running switch process
+<tmux>
 nh os switch . --hostname <hostname> <--ask>
 ```
 
 7. Restart system to apply boot changes: `sudo reboot`
+
+
+## Update existing host
+
+```bash
+# Your machine
+rsync -a --progress -e ssh --exclude='result*' --exclude='*.img' ./ <user>@<host>:/etc/nixos
+```
+
+Then connect to host and switch to the new configuration:
+
+```bash
+# Existing host
+cd /etc/nixos
+nh os switch . <--ask>
+```
 
 
 ## Building an aarch64 SD bootstrap image
