@@ -1,3 +1,54 @@
+# My NixOS configuration
+
+This is my personal NixOS configuration for my NixOS machines.
+
+## Structure
+
+The Nix configuration is structured as follows:
+
+### Flake
+
+My NixOS configuration is using flakes, which must be explicitly enabled in the nix config.
+
+Furthermore, it is following the so called "dendritic" pattern,
+in which nix files define ["modules" of the flake-parts framework](https://flake.parts)
+are combined to form multiple final system configurations for the different hosts.
+
+### NixOS configuration
+
+#### Core modules
+
+| Module | Description |
+| :---: | :--- |
+| [Essential](./nixos/core/essential.nix) | Configuration options shared across all hosts like enabling flakes and setting the right timeZone |
+| [Backup](./nixos/core/backup.nix) | Sets up [kopia](https://kopia.io/) for scheduled backup to central server |
+| [Containers](./nixos/core/containers.nix) | Sets up [Docker](https://www.docker.com/) |
+| [Home Manager](./nixos/core/home-manager.nix) | Sets common [Home Manager](https://github.com/nix-community/home-manager) options |
+| [Maintenance](./nixos/core/maintenance.nix) | Enables automatic upgrades and garbage-collection |
+| [Network](./nixos/core/network.nix) | Sets up [Tailscale](https://tailscale.com/) and other network quirks |
+| [Performance](./nixos/core/performance.nix) | Adjusts some performance-impacting settings based on the hardware of system |
+| [Secrets](./nixos/core/secrets.nix) | Secret management via [agenix](https://github.com/ryantm/agenix) + [agenix-rekey](https://github.com/oddlama/agenix-rekey), required for all modules which import secrets |
+| [Security](./nixos/core/security.nix) | System hardening settings |
+| [SSH](./nixos/core/ssh.nix) | Enables OpenSSH server |
+| [Users](./nixos/core/users.nix) | Adds my user along with authorized SSH keys |
+
+#### Profiles, combined set of modules + configuration for specific use-cases:
+
+| Profile | Description |
+| :---: | :--- |
+| [Bootstrap](./nixos/profiles/bootstrap.nix) | Minimal set of modules for initial deployment |
+| [Server](./nixos/profiles/server.nix) | All modules relevant for headless servers |
+| [WSL](./nixos/profiles/wsl.nix) | Modules relevant for a [NixOS-WSL](https://github.com/nix-community/NixOS-WSL) setup |
+
+#### Systems, final configurations for specific hosts, using 1 profile + host-specific configuration:
+
+| System | Uses profile | Description |
+| :---: | :---: | :--- |
+| [Blueberry](./nixos/systems/blueberry.nix) | Server | Raspberry Pi 3b+ |
+| [Bootstrap SD](./nixos/systems/bootstrap-sd.nix) | Bootstrap | SD card image for initial deployment |
+| [PC WSL](./nixos/systems/pc-wsl.nix) | WSL | WSL setup on my PC |
+
+
 ## Deploy to new host
 
 1. Build sd image and flash to storage media
