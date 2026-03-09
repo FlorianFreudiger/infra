@@ -12,7 +12,7 @@ My NixOS configuration is using flakes, which must be explicitly enabled in the 
 
 Furthermore, it is following the so called "dendritic" pattern,
 in which nix files define ["modules" of the flake-parts framework](https://flake.parts)
-are combined to form multiple final system configurations for the different hosts.
+which are then combined to form multiple final system configurations for the different hosts.
 
 ### NixOS configuration
 
@@ -32,7 +32,9 @@ are combined to form multiple final system configurations for the different host
 | [SSH](./nixos/core/ssh.nix) | Enables OpenSSH server |
 | [Users](./nixos/core/users.nix) | Adds my user along with authorized SSH keys |
 
-#### Profiles, combined set of modules + configuration for specific use-cases:
+#### Profiles
+
+Combined set of modules + configuration for specific use-cases
 
 | Profile | Description |
 | :---: | :--- |
@@ -40,7 +42,9 @@ are combined to form multiple final system configurations for the different host
 | [Server](./nixos/profiles/server.nix) | All modules relevant for headless servers |
 | [WSL](./nixos/profiles/wsl.nix) | Modules relevant for a [NixOS-WSL](https://github.com/nix-community/NixOS-WSL) setup |
 
-#### Systems, final configurations for specific hosts, using 1 profile + host-specific configuration:
+#### Systems
+
+Final configurations for specific hosts, using the appropriate profile + host-specific configuration settings
 
 | System | Uses profile | Description |
 | :---: | :---: | :--- |
