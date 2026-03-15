@@ -14,24 +14,33 @@
       config =
         let
           mem = config.infra.hostFacts.memoryGiB;
+          memMiB = if builtins.isInt mem then mem * 1024 else null;
           lowMem = builtins.isInt mem && mem <= 4; # Consider low memory if 4 GiB or less
         in
-        {
-          # Enable zram, note it is only available in WSL via custom kernel
-          zramSwap = {
-            enable = true;
-            algorithm = "zstd";
+        lib.mkMerge [
+          {
+            # Enable zram, note it is only available in WSL via custom kernel
+            zramSwap = {
+              enable = true;
+              algorithm = "zstd";
+            };
           }
-          # Increase memory percent for hosts with low memory
-          // lib.optionalAttrs lowMem {
-            memoryPercent = 100; # max memory that can be stored in zram
-          };
+          (lib.mkIf lowMem {
+            # Increase memory percent for hosts with low memory
+            zramSwap.memoryPercent = 120; # max memory that can be stored in zram
 
-          # Limit number of jobs and concurrent tasks for low-memory hosts to avoid OOM
-          nix.settings = lib.mkIf lowMem {
-            max-jobs = 1;
-            cores = 1;
-          };
-        };
+            # Limit number of jobs and concurrent tasks for low-memory hosts to avoid OOM
+            nix.settings = {
+              max-jobs = 1;
+              cores = 1;
+            };
+
+            # Limit max memory for nixos-upgrade service if used
+            systemd.services.nixos-upgrade.serviceConfig = lib.mkIf config.system.autoUpgrade.enable {
+              MemoryHigh = "${toString (builtins.floor (memMiB / 2))}M";
+              MemoryMax = "${toString (builtins.floor (memMiB * 3 / 4))}M";
+            };
+          })
+        ];
     };
 }

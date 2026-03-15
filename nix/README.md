@@ -105,6 +105,7 @@ Then connect to host and switch to the new configuration:
 ```bash
 # Existing host
 cd /etc/nixos
+<tmux>
 nh os switch . <--ask>
 ```
 
