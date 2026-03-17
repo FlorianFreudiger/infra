@@ -7,7 +7,7 @@
         self.nixosModules.backup
         self.nixosModules.containers
         self.nixosModules.essential
-        # no home-manager module
+        self.nixosModules.home-manager
         self.nixosModules.maintenance
         self.nixosModules.network
         self.nixosModules.performance

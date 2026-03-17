@@ -3,7 +3,7 @@
   flake.nixosConfigurations.pc-wsl = inputs.nixpkgs.lib.nixosSystem {
     system = "x86_64-linux";
     modules = [
-      # Import specific role
+      # Import specific nixos profile
       self.nixosModules.wsl
 
       # Host facts
@@ -20,12 +20,14 @@
         {
           system.stateVersion = "25.11";
           networking.hostName = "pc-wsl";
+
+          # Add Home Manager configuration for user
           home-manager.users.turtle = {
             home.stateVersion = "25.11";
 
             imports = [
-              self.homeModules.default
-              self.homeModules.dev-all
+              # Import specific home-manager profile
+              self.homeModules.development
             ];
 
             home.username = "turtle";

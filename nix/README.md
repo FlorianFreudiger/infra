@@ -30,7 +30,7 @@ which are then combined to form multiple final system configurations for the dif
 | [Secrets](./nixos/core/secrets.nix) | Secret management via [agenix](https://github.com/ryantm/agenix) + [agenix-rekey](https://github.com/oddlama/agenix-rekey), required for all modules which import secrets |
 | [Security](./nixos/core/security.nix) | System hardening settings |
 | [SSH](./nixos/core/ssh.nix) | Enables OpenSSH server |
-| [Users](./nixos/core/users.nix) | Adds my user along with authorized SSH keys |
+| [Users](./nixos/core/users.nix) | Adds my user along with authorized SSH keys and shells |
 
 #### Profiles
 

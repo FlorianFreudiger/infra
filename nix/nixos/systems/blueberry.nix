@@ -3,7 +3,7 @@
   flake.nixosConfigurations.blueberry = inputs.nixpkgs.lib.nixosSystem {
     system = "aarch64-linux";
     modules = [
-      # Import specific role
+      # Import specific nixos profile
       self.nixosModules.server
 
       # Host facts
@@ -20,6 +20,19 @@
         {
           system.stateVersion = "25.11";
           networking.hostName = "blueberry";
+
+          # Add Home Manager configuration for user
+          home-manager.users.turtle = {
+            home.stateVersion = "25.11";
+
+            imports = [
+              # Import specific home-manager profile
+              self.homeModules.server
+            ];
+
+            home.username = "turtle";
+            home.homeDirectory = "/home/turtle";
+          };
 
           # Kopia credentials
           age.secrets.kopia-password-blueberry = {
