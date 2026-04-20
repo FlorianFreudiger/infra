@@ -16,7 +16,7 @@
 
       # Host specific configuration
       (
-        { config, ... }:
+        { ... }:
         {
           system.stateVersion = "25.11";
           networking.hostName = "pc-wsl";
@@ -38,7 +38,6 @@
           age.secrets.kopia-password-pc-wsl = {
             rekeyFile = self + "/secrets/master/kopia-password-pc-wsl.age";
           };
-          services.kopia.backups.daily.passwordFile = config.age.secrets.kopia-password-pc-wsl.path;
 
           # Use system for building aarch64 image via binary emulation
           boot.binfmt.emulatedSystems = [ "aarch64-linux" ];

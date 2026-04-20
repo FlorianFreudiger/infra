@@ -73,6 +73,12 @@
           fi
         '';
       };
+
+      dailyBackupEnabled = lib.hasAttrByPath [
+        "age"
+        "secrets"
+        "kopia-password-${config.networking.hostName}"
+      ] config;
     in
     {
       imports = [
@@ -82,10 +88,12 @@
       services.kopia = {
         package = kopiaButConnectToServerInsteadOfWebdav;
 
-        backups.daily = {
+        backups.daily = lib.mkIf dailyBackupEnabled {
           repository.webdav = {
             urlFile = config.age.secrets.kopia-url.path;
           };
+
+          passwordFile = lib.mkDefault config.age.secrets."kopia-password-${config.networking.hostName}".path;
 
           paths = [
             "/home"
@@ -98,6 +106,10 @@
           };
         };
       };
+
+      warnings =
+        lib.optional (!dailyBackupEnabled)
+          "Automatic Kopia backup is disabled because no host-specific Kopia password is configured!";
 
       age.secrets.kopia-url = {
         rekeyFile = self + "/secrets/master/kopia-url.age";

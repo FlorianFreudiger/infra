@@ -17,9 +17,10 @@ result-*
 # Ignore automatically generated direnv output
 .direnv
 
-# Ignore built nixos sd images
+# Ignore built nixos images
 *.img
 *.img.zst
+*.iso
 
 
 ## WSL kernel build outputs

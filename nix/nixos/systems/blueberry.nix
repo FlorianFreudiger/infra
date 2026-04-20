@@ -16,7 +16,7 @@
 
       # Host specific configuration
       (
-        { config, ... }:
+        { ... }:
         {
           system.stateVersion = "25.11";
           networking.hostName = "blueberry";
@@ -38,7 +38,6 @@
           age.secrets.kopia-password-blueberry = {
             rekeyFile = self + "/secrets/master/kopia-password-blueberry.age";
           };
-          services.kopia.backups.daily.passwordFile = config.age.secrets.kopia-password-blueberry.path;
 
           # Use extlinux bootloader instead of GRUB
           boot.loader.grub.enable = false;

@@ -24,5 +24,10 @@
         daemon.settings.firewall-backend = "nftables";
         extraPackages = [ pkgs.nftables ];
       };
+
+      # Extra packages for container management
+      environment.systemPackages = with pkgs; [
+        lazydocker
+      ];
     };
 }

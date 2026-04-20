@@ -39,6 +39,7 @@ Combined set of modules + configuration for specific use-cases
 | Profile | Description |
 | :---: | :--- |
 | [Bootstrap](./nixos/profiles/bootstrap.nix) | Minimal set of modules for initial deployment |
+| [Desktop](./nixos/profiles/desktop.nix) | Modules for desktop/laptop setups |
 | [Server](./nixos/profiles/server.nix) | All modules relevant for headless servers |
 | [WSL](./nixos/profiles/wsl.nix) | Modules relevant for a [NixOS-WSL](https://github.com/nix-community/NixOS-WSL) setup |
 
@@ -49,16 +50,19 @@ Final configurations for specific hosts, using the appropriate profile + host-sp
 | System | Uses profile | Description |
 | :---: | :---: | :--- |
 | [Blueberry](./nixos/systems/blueberry.nix) | Server | Raspberry Pi 3b+ |
-| [Bootstrap SD](./nixos/systems/bootstrap-sd.nix) | Bootstrap | SD card image for initial deployment |
 | [PC WSL](./nixos/systems/pc-wsl.nix) | WSL | WSL setup on my PC |
+| [Pepper](./nixos/systems/pepper.nix) | Desktop | HP Laptop |
+| Misc: [Setup images](./nixos/systems/setup-images.nix) | Bootstrap | CD installer and SD card images for initial deployments |
 
 
 ## Deploy to new host
 
-1. Build sd image and flash to storage media
+1. Build one of the [setup images](./nixos/systems/setup-images.nix), flash to storage media
 2. Boot host and wait for it to be reachable via ssh
 3. Define new host in `nixos/systems/<hostname>.nix`, use `nixos-generate-config --show-hardware-config` on new host to get hardware-configuration
-4. Rekey relevant secrets via host-key:
+4. If installing to new storage media via installer,
+   perform the necessary partitioning and formatting steps and reboot into the new system
+5. Rekey relevant secrets via host-key:
 
 ```bash
 # Your machine
@@ -70,7 +74,7 @@ agenix rekey
 git -C ./secrets add rekeyed/<hostname>
 ```
 
-5. Copy over nixos configuration to host:
+6. Copy over nixos configuration to host:
 
 While we could also deploy remotely, this way we have a local copy and auto-upgrades work
 
@@ -80,7 +84,7 @@ ssh <user>@<host> sudo chown <user> /etc/nixos
 rsync -a --progress -e ssh --exclude='result*' --exclude='*.img' ./ <user>@<host>:/etc/nixos
 ```
 
-6. Connect to host and switch to the new configuration:
+7. Connect to host and switch to the new configuration:
 
 ```bash
 # New host
@@ -90,7 +94,7 @@ cd /etc/nixos
 nh os switch . --hostname <hostname> <--ask>
 ```
 
-7. Restart system to apply boot changes: `sudo reboot`
+8. Restart system to apply boot changes: `sudo reboot`
 
 
 ## Update existing host
