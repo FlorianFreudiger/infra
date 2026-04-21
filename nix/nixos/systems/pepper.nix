@@ -27,7 +27,7 @@
 
             imports = [
               # Import specific home-manager profile
-              self.homeModules.development
+              self.homeModules.desktop
             ];
 
             home.username = "turtle";
@@ -110,8 +110,6 @@
           nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
           hardware.cpu.intel.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
 
-          console.keyMap = "de";
-
           ## GPU configuration ##
           nixpkgs.config.allowUnfree = true;
           hardware.graphics.enable = true;
@@ -120,7 +118,7 @@
             package = config.boot.kernelPackages.nvidiaPackages.legacy_580;
 
             # Power management through systemd
-            powerManagement.enable = true;
+            powerManagement.enable = false; # TODO: Test sometime
 
             # Options NOT supported for Pascal GPU generation
             open = false;
