@@ -32,6 +32,14 @@ which are then combined to form multiple final system configurations for the dif
 | [SSH](./nixos/core/ssh.nix) | Enables OpenSSH server |
 | [Users](./nixos/core/users.nix) | Adds my user along with authorized SSH keys and shells |
 
+#### Desktop modules
+
+| Module | Description |
+| :---: | :--- |
+| [Desktop Environment](./nixos/desktop/desktop-environment.nix) | Setup KDE and standard apps |
+| [Extra App Formats](./nixos/desktop/extra-app-formats.nix) | Support AppImages, Flatpaks and more unpatched apps |
+| [Secure Boot](./nixos/desktop/secure-boot.nix) | Switch to Lanzaboote bootloader and enable TPM2 support |
+
 #### Profiles
 
 Combined set of modules + configuration for specific use-cases

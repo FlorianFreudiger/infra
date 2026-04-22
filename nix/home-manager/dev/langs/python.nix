@@ -1,19 +1,31 @@
+# Setup Python with:
+# - Package managers + linters/formatters/checkers
+# - Additional Python packages: For one-off scripts
+
 { ... }:
 {
   flake.homeModules.dev-langs-python =
     { pkgs, ... }:
     {
       home.packages = with pkgs; [
-        python3
-        black
-        isort
-        pyright
-      ];
-      programs.pylint.enable = true;
-      programs.mypy.enable = true;
+        (python313.withPackages (
+          # Additional Python modules
+          python-pkgs: with python-pkgs; [
+            argon2-cffi
+            cryptography
+            dbus-python
+            pycryptodome
+          ]
+        ))
 
-      # Python package managers
-      programs.poetry.enable = true;
-      programs.uv.enable = true;
+        black # formatter
+        isort # formatter
+        pyright # type checker
+      ];
+
+      programs.poetry.enable = true; # package manager
+      programs.uv.enable = true; # package manager
+      programs.mypy.enable = true; # type checker
+      programs.pylint.enable = true; # linter
     };
 }

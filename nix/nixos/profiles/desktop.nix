@@ -17,6 +17,7 @@
         self.nixosModules.users
 
         self.nixosModules.desktop-environment
+        self.nixosModules.extra-app-formats
         self.nixosModules.secure-boot
       ];
     };

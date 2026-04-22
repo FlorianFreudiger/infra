@@ -16,7 +16,7 @@
 
       # Host specific configuration
       (
-        { ... }:
+        { pkgs, ... }:
         {
           system.stateVersion = "25.11";
           networking.hostName = "pepper";
@@ -41,6 +41,7 @@
 
           # Configure network connections interactively with nmcli or nmtui.
           networking.networkmanager.enable = true;
+          networking.networkmanager.plugins = [ pkgs.networkmanager-openvpn ];
         }
       )
 
