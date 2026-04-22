@@ -54,6 +54,11 @@
         home-manager.follows = "home-manager";
       };
     };
+
+    autoaspm = {
+      url = "git+https://git.notthebe.ee/notthebee/AutoASPM.git";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =

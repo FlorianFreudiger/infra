@@ -119,7 +119,7 @@
             package = config.boot.kernelPackages.nvidiaPackages.legacy_580;
 
             # Power management through systemd
-            powerManagement.enable = false; # TODO: Test sometime
+            powerManagement.enable = true;
 
             # Options NOT supported for Pascal GPU generation
             open = false;

@@ -11,6 +11,7 @@
         self.nixosModules.maintenance
         self.nixosModules.network
         self.nixosModules.performance
+        self.nixosModules.power-efficiency
         self.nixosModules.secrets
         self.nixosModules.security
         self.nixosModules.ssh
