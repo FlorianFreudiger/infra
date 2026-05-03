@@ -17,6 +17,9 @@ result-*
 # Ignore automatically generated direnv output
 .direnv
 
+# Ignore NixOS interactive test driver history
+**/.nixos-test-history
+
 # Ignore built nixos images
 *.img
 *.img.zst
@@ -26,3 +29,8 @@ result-*
 ## WSL kernel build outputs
 wsl/out
 wsl/wsl-kernel
+
+
+# Syncthing stuff
+.stfolder
+.stignore

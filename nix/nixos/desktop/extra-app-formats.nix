@@ -6,20 +6,31 @@
 { ... }:
 {
   flake.nixosModules.extra-app-formats =
-    { pkgs, ... }:
+    {
+      pkgs,
+      options,
+      lib,
+      ...
+    }:
     {
       ## nix-ld ##
       programs.nix-ld = {
         enable = true;
 
         # Extra libraries to become available
-        libraries =
+        libraries = lib.unique (
+          # Include default libraries
+          options.programs.nix-ld.libraries.default
+
           # Include all libraries also expected by AppImages
           # This fixes running Jetbrains tools when installed via Jetbrains Toolbox
-          (pkgs.appimageTools.defaultFhsEnvArgs.multiPkgs pkgs)
+          ++ (pkgs.appimageTools.defaultFhsEnvArgs.multiPkgs pkgs)
+
+          # Extra libraries
           ++ (with pkgs; [
             libsecret
-          ]);
+          ])
+        );
       };
 
       ## AppImage ##

@@ -6,9 +6,14 @@
       home.packages = with pkgs; [
         keepassxc
         jetbrains-toolbox
+        signal-desktop
         vscode
-        python313Packages.gurobipy
       ];
+
+      programs.discord = {
+        enable = true;
+        settings.SKIP_HOST_UPDATE = true;
+      };
 
       services.syncthing.enable = true;
       services.syncthing.tray.enable = true;

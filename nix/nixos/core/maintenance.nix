@@ -28,6 +28,10 @@
         ++ lib.optionals (options ? home-manager) [
           "--update-input"
           "home-manager"
+          "--update-input"
+          "nixpkgs-unstable" # Currently only used by zen-browser
+          "--update-input"
+          "zen-browser"
         ];
         dates = "03:00";
         randomizedDelaySec = "15min";

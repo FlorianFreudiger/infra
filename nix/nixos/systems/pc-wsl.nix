@@ -42,6 +42,9 @@
           # Use system for building aarch64 image via binary emulation
           boot.binfmt.emulatedSystems = [ "aarch64-linux" ];
           wsl.interop.register = true;
+
+          # Separate DNS from Windows to avoid conflicts with systemd-resolved
+          wsl.wslConf.network.generateResolvConf = false;
         }
       )
     ];

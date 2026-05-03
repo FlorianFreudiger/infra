@@ -27,6 +27,7 @@ which are then combined to form multiple final system configurations for the dif
 | [Maintenance](./nixos/core/maintenance.nix) | Enables automatic upgrades and garbage-collection |
 | [Network](./nixos/core/network.nix) | Sets up [Tailscale](https://tailscale.com/) and other network quirks |
 | [Performance](./nixos/core/performance.nix) | Adjusts some performance-impacting settings based on the hardware of system |
+| [Power Efficiency](./nixos/core/power-efficiency.nix) | Use PowerTOP and AutoASPM to improve power efficiency |
 | [Secrets](./nixos/core/secrets.nix) | Secret management via [agenix](https://github.com/ryantm/agenix) + [agenix-rekey](https://github.com/oddlama/agenix-rekey), required for all modules which import secrets |
 | [Security](./nixos/core/security.nix) | System hardening settings |
 | [SSH](./nixos/core/ssh.nix) | Enables OpenSSH server |
