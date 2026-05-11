@@ -6,7 +6,7 @@
       # Use nftables instead of iptables
       networking.nftables.enable = true;
 
-      # Enable systemd DNS resolver daemon
+      # Use systemd DNS resolver daemon instead of resolvconf
       services.resolved.enable = true;
 
       services.tailscale = {

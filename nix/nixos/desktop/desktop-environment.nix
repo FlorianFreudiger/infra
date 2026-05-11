@@ -33,5 +33,8 @@
         kdiff3 # File/directory comparison tool
         vlc # Media player
       ];
+
+      # Connect to phone and other devices, will open ports in firewall
+      programs.kdeconnect.enable = true;
     };
 }

@@ -30,6 +30,7 @@
 
         # Administration
         kmod
+        lsof
       ];
 
       programs.nix-ld.enable = true;
