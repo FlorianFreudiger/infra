@@ -6,8 +6,23 @@
       # Use nftables instead of iptables
       networking.nftables.enable = true;
 
+      # Mullvad DNS with Ads, Trackers and Malware blocking
+      networking.nameservers = [
+        "194.242.2.4#base.dns.mullvad.net"
+        "2a07:e340::4#base.dns.mullvad.net"
+      ];
+
       # Use systemd DNS resolver daemon instead of resolvconf
-      services.resolved.enable = true;
+      services.resolved = {
+        enable = true;
+        dnsovertls = "true";
+        fallbackDns = [ # Cloudflare
+          "1.1.1.1#one.one.one.one"
+          "1.0.0.1#one.one.one.one"
+          "2606:4700:4700::1111#one.one.one.one"
+          "2606:4700:4700::1001#one.one.one.one"
+        ];
+      };
 
       services.tailscale = {
         enable = true;

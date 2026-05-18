@@ -15,6 +15,8 @@
         settings.SKIP_HOST_UPDATE = true;
       };
 
+      programs.ghostty.enable = true;
+
       services.syncthing.enable = true;
       services.syncthing.tray.enable = true;
     };

@@ -49,8 +49,16 @@
       systemd.services.flatpak-add-flathub-repo = {
         wantedBy = [ "multi-user.target" ];
         path = [ pkgs.flatpak ];
+
+        # Skip if flathub is already added, assuming config file is at default location
+        unitConfig.ConditionPathExists = [ "/var/lib/flatpak/repo/config" ];
+        serviceConfig.ExecCondition = [
+          "${pkgs.bash}/bin/bash -c \"! ${pkgs.gnugrep}/bin/grep -qF '[remote \\\"flathub\\\"]' /var/lib/flatpak/repo/config\""
+        ];
+
         script = ''
-          flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+          set -euo pipefail
+          flatpak remote-add --system --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
         '';
       };
     };

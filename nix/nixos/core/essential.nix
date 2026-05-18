@@ -29,8 +29,10 @@
         jq
 
         # Administration
+        gptfdisk
         kmod
         lsof
+        parted
       ];
 
       programs.nix-ld.enable = true;
