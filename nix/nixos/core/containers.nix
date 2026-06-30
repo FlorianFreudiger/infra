@@ -10,10 +10,6 @@
     {
       virtualisation.docker = {
         enable = true;
-        # Use Docker 29 until general "docker" package is updated to 29+
-        # Since it enables nftables support via daemon settings
-        package = pkgs.docker_29;
-
         daemon.settings = {
           # Keep containers running when the daemon is restarted, e.g. for updates
           live-restore = true;

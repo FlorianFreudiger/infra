@@ -25,10 +25,10 @@
         '';
         plugins = [
           # Make prompt async
-          {
-            name = "async-prompt";
-            src = pkgs.fishPlugins.async-prompt.src;
-          }
+          #{ currently breaks prompt coloring
+          #  name = "async-prompt";
+          #  src = pkgs.fishPlugins.async-prompt.src;
+          #}
 
           # Jump to frequently used directories
           {
