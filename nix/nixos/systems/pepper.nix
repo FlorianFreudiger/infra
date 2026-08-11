@@ -54,6 +54,9 @@
           ...
         }:
         {
+          # Disable AutoASPM as enabling aspm on one pcieport caused correctable PCIe link issues and log spam
+          services.autoaspm.enable = lib.mkForce false;
+
           imports = [
             (modulesPath + "/installer/scan/not-detected.nix")
           ];
@@ -68,6 +71,8 @@
           boot.initrd.kernelModules = [ ];
           boot.kernelModules = [ "kvm-intel" ];
           boot.extraModulePackages = [ ];
+          # Enable HP mute LED
+          boot.extraModprobeConfig = "options snd-hda-intel model=hp-mute-led-mic3";
 
           boot.initrd.luks.devices."cryptroot" = {
             device = "/dev/disk/by-uuid/ccd7feb5-2151-4d81-a076-8bd4250ea5d9";
