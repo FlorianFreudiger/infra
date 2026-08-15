@@ -6,14 +6,6 @@
       # Import specific nixos profile
       self.nixosModules.wsl
 
-      # Host facts
-      (
-        { ... }:
-        {
-          infra.hostFacts.memoryGiB = 32;
-        }
-      )
-
       # Host specific configuration
       (
         { ... }:

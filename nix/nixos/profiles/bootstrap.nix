@@ -7,6 +7,7 @@
     {
       imports = [
         self.nixosModules.essential
+        self.nixosModules.options
 
         # Add users with their authorized SSH keys
         self.nixosModules.users
@@ -19,6 +20,6 @@
       ];
 
       # Set low-end hostFacts to ensure bootstrapping works on all devices, can be overridden afterwards
-      infra.hostFacts.memoryGiB = 1;
+      infra.hostFacts.memoryMiB = 0;
     };
 }

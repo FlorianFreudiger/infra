@@ -20,12 +20,14 @@ which are then combined to form multiple final system configurations for the dif
 
 | Module | Description |
 | :---: | :--- |
-| [Essential](./nixos/core/essential.nix) | Configuration options shared across all hosts like enabling flakes and setting the right timeZone |
 | [Backup](./nixos/core/backup.nix) | Sets up [kopia](https://kopia.io/) for scheduled backup to central server |
 | [Containers](./nixos/core/containers.nix) | Sets up [Docker](https://www.docker.com/) |
+| **[Essential](./nixos/core/essential.nix)** | Configuration options shared across all hosts like enabling flakes and setting the right timeZone |
+| [Facter](./nixos/core/facter.nix) | [Nixos-facter](https://github.com/nix-community/nixos-facter) derives hardware configuration from generated file |
 | [Home Manager](./nixos/core/home-manager.nix) | Sets common [Home Manager](https://github.com/nix-community/home-manager) options |
 | [Maintenance](./nixos/core/maintenance.nix) | Enables automatic upgrades and garbage-collection |
 | [Network](./nixos/core/network.nix) | Sets up [Tailscale](https://tailscale.com/) and other network quirks |
+| [Options](./nixos/core/options.nix) | Defines custom options used and set by other modules |
 | [Performance](./nixos/core/performance.nix) | Adjusts some performance-impacting settings based on the hardware of system |
 | [Power Efficiency](./nixos/core/power-efficiency.nix) | Use PowerTOP and AutoASPM to improve power efficiency |
 | [Secrets](./nixos/core/secrets.nix) | Secret management via [agenix](https://github.com/ryantm/agenix) + [agenix-rekey](https://github.com/oddlama/agenix-rekey), required for all modules which import secrets |
@@ -68,10 +70,21 @@ Final configurations for specific hosts, using the appropriate profile + host-sp
 
 1. Build one of the [setup images](./nixos/systems/setup-images.nix), flash to storage media
 2. Boot host and wait for it to be reachable via ssh
-3. Define new host in `nixos/systems/<hostname>.nix`, use `nixos-generate-config --show-hardware-config` on new host to get hardware-configuration
-4. If installing to new storage media via installer,
-   perform the necessary partitioning and formatting steps and reboot into the new system
-5. Rekey relevant secrets via host-key:
+3. Perform the necessary partitioning and formatting steps
+4. Define new host in `nixos/systems/<hostname>.nix`, use `nixos-generate-config --show-hardware-config` on new host to get hardware-configuration
+5. Reboot into the new system
+6. Generate facter file on new host:
+
+```bash
+# Your machine
+ssh <user>@<host> 'sudo nix --extra-experimental-features "nix-command flakes" run nixpkgs#nixos-facter -- -o facter.json'
+ssh <user>@<host> sudo chown <user> facter.json
+mkdir -p ./secrets/hosts/<hostname>
+scp <user>@<host>:facter.json secrets/hosts/<hostname>/facter.json
+git -C ./secrets add hosts/<hostname>
+```
+
+7. Rekey relevant secrets via host-key:
 
 ```bash
 # Your machine
@@ -83,7 +96,7 @@ agenix rekey
 git -C ./secrets add rekeyed/<hostname>
 ```
 
-6. Copy over nixos configuration to host:
+8. Copy over nixos configuration to host:
 
 While we could also deploy remotely, this way we have a local copy and auto-upgrades work
 
@@ -93,7 +106,7 @@ ssh <user>@<host> sudo chown <user> /etc/nixos
 rsync -a --progress -e ssh --exclude='result*' --exclude='*.img' ./ <user>@<host>:/etc/nixos
 ```
 
-7. Connect to host and switch to the new configuration:
+9. Connect to host and switch to the new configuration:
 
 ```bash
 # New host
@@ -103,7 +116,7 @@ cd /etc/nixos
 nh os switch . --hostname <hostname> <--ask>
 ```
 
-8. Restart system to apply boot changes: `sudo reboot`
+10. Restart system to apply boot changes: `sudo reboot`
 
 
 ## Update existing host

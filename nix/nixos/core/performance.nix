@@ -3,19 +3,10 @@
   flake.nixosModules.performance =
     { lib, config, ... }:
     {
-      options.infra.hostFacts = {
-        memoryGiB = lib.mkOption {
-          type = lib.types.nullOr lib.types.int;
-          default = null;
-          description = "Host memory size used for performance tuning.";
-        };
-      };
-
       config =
         let
-          mem = config.infra.hostFacts.memoryGiB;
-          memMiB = if builtins.isInt mem then mem * 1024 else null;
-          lowMem = builtins.isInt mem && mem <= 4; # Consider low memory if 4 GiB or less
+          memMiB = config.infra.hostFacts.memoryMiB;
+          lowMem = builtins.isInt memMiB && memMiB <= 4096; # Consider low memory if 4 GiB or less
         in
         lib.mkMerge [
           {

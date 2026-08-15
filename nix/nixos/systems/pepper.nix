@@ -6,14 +6,6 @@
       # Import specific nixos profile
       self.nixosModules.desktop
 
-      # Host facts
-      (
-        { ... }:
-        {
-          infra.hostFacts.memoryGiB = 16;
-        }
-      )
-
       # Host specific configuration
       (
         { pkgs, ... }:

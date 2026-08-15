@@ -9,9 +9,11 @@
         self.nixosModules.backup
         # no containers module as docker is passed through from Windows
         self.nixosModules.essential
+        self.nixosModules.facter
         self.nixosModules.home-manager
         self.nixosModules.maintenance
         self.nixosModules.network
+        self.nixosModules.options
         self.nixosModules.performance
         self.nixosModules.secrets
         self.nixosModules.security
