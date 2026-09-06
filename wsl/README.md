@@ -6,12 +6,24 @@ Currently only enables Zram support.
 
 ## Prerequisites
 
-Example requirement installation for Ubuntu/Debian-based distros:
+### WSL
+
+Requires WSL 2.9.8 or newer for the new unified kernel artifacts layout.
+Check with `wsl --version` and update with:
+
+```powershell
+# PowerShell
+wsl --update --pre-release
+```
+
+### Dependencies
+
+#### Ubuntu/Debian
 
 ```bash
 # WSL
 sudo apt update
-sudo apt install -y build-essential flex bison libssl-dev libelf-dev bc python3 pahole cpio dwarves qemu-utils git
+sudo apt install -y build-essential flex bison libssl-dev libelf-dev bc python3 pahole cpio dwarves qemu-utils rsync git
 ```
 
 ## Build
