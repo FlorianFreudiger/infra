@@ -5,7 +5,7 @@
 { inputs, ... }:
 {
   flake.homeModules.browser =
-    { pkgs, ... }:
+    { pkgs, lib, ... }:
     {
       home.packages = with pkgs; [
         kdePackages.plasma-browser-integration
@@ -21,11 +21,29 @@
         setAsDefaultBrowser = true;
 
         policies = {
+          # See https://firefox-admin-docs.mozilla.org/reference/policies/
           DisableAppUpdate = true;
           DisableFirefoxStudies = true;
-          DisablePocket = true;
+          DisableRemoteImprovements = true;
           DisableTelemetry = true;
+          EnableTrackingProtection = {
+            Value = true;
+            Category = "strict";
+            BaselineExceptions = true;
+          };
+          HttpsOnlyMode = "enabled";
+          NetworkPrediction = false; # Disable DNS prefetching
           NoDefaultBookmarks = true;
+          OfferToSaveLoginsDefault = false;
+          Permissions = {
+            Autoplay = {
+              Allow = [
+                "https://www.youtube.com"
+                "https://www.twitch.tv"
+              ];
+              Default = "block-audio-video";
+            };
+          };
 
           ExtensionSettings = {
             # uBlock Origin
@@ -33,6 +51,7 @@
               installation_mode = "force_installed";
               install_url = "https://addons.mozilla.org/firefox/downloads/latest/uBlock0@raymondhill.net/latest.xpi";
               private_browsing = true;
+              default_area = "navbar";
             };
             # Plasma Integration
             "plasma-browser-integration@kde.org" = {
@@ -43,28 +62,123 @@
             "keepassxc-browser@keepassxc.org" = {
               installation_mode = "normal_installed";
               install_url = "https://addons.mozilla.org/firefox/downloads/latest/keepassxc-browser@keepassxc.org/latest.xpi";
+              default_area = "navbar";
             };
           };
 
+          # Partly from https://github.com/arkenfox/user.js/blob/master/user.js
           Preferences = {
+            ## UX ##
             "browser.disableResetPrompt" = {
               Value = true;
-              Status = "user";
+              Status = "locked";
             };
             "browser.translations.neverTranslateLanguages" = {
               Value = "de";
-              Status = "user";
+              Status = "default";
             };
             "signon.firefoxRelay.feature" = {
               Value = "disabled";
-              Status = "user";
+              Status = "locked";
             };
+            "browser.search.region" = {
+              # Keep search region in Germany to avoid search engine additions from different regions
+              Value = "DE";
+              Status = "locked";
+            };
+            "browser.region.update.enabled" = {
+              # Disable region updates as the region follows VPN exit node
+              Value = false;
+              Status = "locked";
+            };
+
+            ## Privacy ##
+            "browser.places.speculativeConnect.enabled" = {
+              # Disable mousedown speculative connections for bookmarks and history
+              Value = false;
+              Status = "locked";
+            };
+            "browser.safebrowsing.downloads.remote.enabled" = {
+              # Disable sending downloaded-binary metadata to Google
+              Value = false;
+              Status = "locked";
+            };
+            "browser.urlbar.speculativeConnect.enabled" = {
+              # Disable urlbar making speculative connections
+              Value = false;
+              Status = "locked";
+            };
+            "network.http.speculative-parallel-limit" = {
+              # Disable link-mouseover opening connection to linked server
+              Value = 0;
+              Status = "locked";
+            };
+            "network.prefetch-next" = {
+              # Disable link prefetching
+              Value = false;
+              Status = "locked";
+            };
+            "privacy.fingerprintingProtection.overrides" = {
+              # Add some resist-fingerprinting (RFP) targets to make fingerprinting harder
+              Value = lib.concatStringsSep "," [
+                "+WebGPULimits" # Normalise reported WebGPU adapter limits
+                "+WebGPUIsFallbackAdapter" # Hide whether the GPU adapter is a software fallback
+                "+WebGPUSubgroupSizes" # Normalise reported WebGPU subgroup sizes
+                "+IMEStyle" # Normalise input-method composition styling
+                "+MediaError" # Drop detailed media error messages
+                "+StreamVideoFacingMode" # Drop facingMode from camera track settings
+                "+VideoElementMozFrames" # Spoof legacy moz* video frame counters
+                "+VideoElementMozFrameDelay" # Spoof legacy mozFrameDelay
+                "+AudioContext" # Normalise AudioContext properties
+                "+AudioSampleRate" # Report a fixed audio sample rate
+
+                ## Some potential for site breakage ##
+                "+WebGLRenderInfo" # Report WebGL vendor and renderer as "Mozilla"
+                "+FontVisibilityBaseSystem" # Limit web-visible fonts, doesn't work on NixOS though
+                "+MediaDevices" # Use generic media device names and groups
+                "+WebGLRenderCapability" # Normalise reported WebGL limits
+              ];
+              Status = "default";
+            };
+          };
+
+          SearchEngines = {
+            Add = [
+              {
+                Name = "NixOS packages";
+                URLTemplate = "https://search.nixos.org/packages?query={searchTerms}";
+                Alias = "@nixpkgs";
+                Description = "Search NixOS packages.";
+                IconURL = "https://search.nixos.org/images/nixos-logomark-default-gradient-none.svg";
+                Encoding = "UTF-8";
+                Method = "GET";
+              }
+              {
+                Name = "NixOS options";
+                URLTemplate = "https://search.nixos.org/options?query={searchTerms}";
+                Alias = "@nixopts";
+                Description = "Search NixOS configuration options.";
+                IconURL = "https://search.nixos.org/images/nixos-logomark-rainbow-gradient-none.svg";
+                Encoding = "UTF-8";
+                Method = "GET";
+              }
+            ];
+            # Keep default search engines: DDG, Google, Wikipedia (en)
+            Remove = [
+              "Amazon.com"
+              "Bing"
+              "eBay"
+              "Ecosia"
+              "Perplexity"
+              "Qwant"
+              "Startpage"
+            ];
           };
         };
 
-        nativeMessagingHosts = [
-          pkgs.kdePackages.plasma-browser-integration
-          pkgs.keepassxc
+        nativeMessagingHosts = with pkgs; [
+          kdePackages.plasma-browser-integration
+          keepassxc
         ];
       };
 
@@ -77,8 +191,8 @@
           "cimiefiiaegbelhefglklhhakcgmhkai" # Plasma Integration
         ];
 
-        nativeMessagingHosts = [
-          pkgs.kdePackages.plasma-browser-integration
+        nativeMessagingHosts = with pkgs; [
+          kdePackages.plasma-browser-integration
         ];
       };
     };
