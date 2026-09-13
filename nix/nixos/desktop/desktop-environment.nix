@@ -10,6 +10,9 @@
       };
       programs.xwayland.enable = true;
 
+      # Add RealtimeKit to allow PipeWire to acquire realtime scheduling priority
+      security.rtkit.enable = true;
+
       # Desktop applications that are nice to have and not user-specific
       environment.systemPackages = with pkgs; [
         # System Utilities

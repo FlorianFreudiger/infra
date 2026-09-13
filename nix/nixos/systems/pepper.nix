@@ -49,6 +49,10 @@
           # Disable AutoASPM as enabling aspm on one pcieport caused correctable PCIe link issues and log spam
           services.autoaspm.enable = lib.mkForce false;
 
+          # Disable dead webcam, otherwise causes log spam and possibly interferes with system suspend/resume
+          systemd.tmpfiles.rules = [ "w /sys/bus/usb/devices/usb1/1-0:1.0/usb1-port3/disable - - - - 1" ];
+          powerManagement.powerDownCommands = "echo 1 > /sys/bus/usb/devices/usb1/1-0:1.0/usb1-port3/disable || true";
+
           imports = [
             (modulesPath + "/installer/scan/not-detected.nix")
           ];
@@ -109,8 +113,13 @@
           hardware.cpu.intel.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
 
           ## GPU configuration ##
-          nixpkgs.config.allowUnfree = true;
+          nixpkgs.config.allowUnfreePackages = [
+            "nvidia-kernel-modules"
+            "nvidia-settings"
+            "nvidia-x11"
+          ];
           hardware.graphics.enable = true;
+          services.xserver.videoDrivers = [ "nvidia" ];
           hardware.nvidia = {
             # Last supported version for Pascal GPU generation
             package = config.boot.kernelPackages.nvidiaPackages.legacy_580;

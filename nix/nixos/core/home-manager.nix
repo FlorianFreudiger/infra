@@ -10,7 +10,9 @@
       ];
 
       home-manager = {
-        useGlobalPkgs = true;
+        # Use separate nixpkgs for home-manager to be able to control the unfree packages allowlist separately
+        useGlobalPkgs = false;
+
         useUserPackages = true;
       };
     };

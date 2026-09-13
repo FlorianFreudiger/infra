@@ -3,6 +3,12 @@
   flake.homeModules.desktop-apps =
     { pkgs, ... }:
     {
+      nixpkgs.config.allowUnfreePackages = [
+        "discord"
+        "jetbrains-toolbox"
+        "vscode"
+      ];
+
       home.packages = with pkgs; [
         keepassxc
         jetbrains-toolbox

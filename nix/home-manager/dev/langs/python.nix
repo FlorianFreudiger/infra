@@ -8,7 +8,7 @@
     { pkgs, ... }:
     {
       home.packages = with pkgs; [
-        (python313.withPackages (
+        (python3.withPackages (
           # Additional Python modules
           python-pkgs: with python-pkgs; [
             argon2-cffi
