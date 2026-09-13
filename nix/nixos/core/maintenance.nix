@@ -24,12 +24,12 @@
         flags = [
           "--update-input"
           "nixpkgs"
+          "--update-input"
+          "nixpkgs-unstable"
         ]
         ++ lib.optionals (options ? home-manager) [
           "--update-input"
           "home-manager"
-          "--update-input"
-          "nixpkgs-unstable" # Currently only used by zen-browser
           "--update-input"
           "zen-browser"
         ];
