@@ -25,5 +25,12 @@
         # use its dummy key for first-time bootstrap.
         hostPubkey = builtins.readFile hostPubkeyPath;
       };
+
+      # Set user passwords here
+      # If this module is not loaded, then the users won't have a password set and can't login with it
+      users.users.turtle.hashedPasswordFile = config.age.secrets.users-turtle-hashed-password.path;
+      age.secrets.users-turtle-hashed-password = {
+        rekeyFile = self + "/secrets/master/users-turtle-hashed-password.age";
+      };
     };
 }

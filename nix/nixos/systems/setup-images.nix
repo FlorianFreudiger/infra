@@ -3,7 +3,7 @@
   flake = {
     ### Installation CD images for new hosts, to setup on host storage. ###
 
-    nixConfigurations.installation-cd-minimal-x64 = inputs.nixpkgs.lib.nixosSystem {
+    nixosConfigurations.installation-cd-minimal-x64 = inputs.nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
       modules = [
         "${inputs.nixpkgs}/nixos/modules/installer/cd-dvd/installation-cd-minimal.nix"
@@ -12,9 +12,9 @@
     };
 
     images.installation-cd-minimal-x64 =
-      self.nixConfigurations.installation-cd-minimal-x64.config.system.build.isoImage;
+      self.nixosConfigurations.installation-cd-minimal-x64.config.system.build.isoImage;
 
-    nixConfigurations.installation-cd-graphical-x64 = inputs.nixpkgs.lib.nixosSystem {
+    nixosConfigurations.installation-cd-graphical-x64 = inputs.nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
       modules = [
         "${inputs.nixpkgs}/nixos/modules/installer/cd-dvd/installation-cd-graphical-calamares-plasma6.nix"
@@ -23,7 +23,7 @@
     };
 
     images.installation-cd-graphical-x64 =
-      self.nixConfigurations.installation-cd-graphical-x64.config.system.build.isoImage;
+      self.nixosConfigurations.installation-cd-graphical-x64.config.system.build.isoImage;
 
     ### Bootstrap SD image for something like a Raspberry Pi, image media will be the device storage. ###
 

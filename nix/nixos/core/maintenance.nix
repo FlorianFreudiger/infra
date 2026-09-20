@@ -39,15 +39,6 @@
       };
 
       systemd.services.nixos-upgrade.serviceConfig = {
-        # Fix nixos-upgrade service aborting when repo is owned by different user
-        # by bind-mounting a dedicated gitconfig with safe.directory=*
-        BindReadOnlyPaths = [
-          "${pkgs.writeText "nixos-upgrade-gitconfig" ''
-            [safe]
-              directory = *
-          ''}:/etc/gitconfig"
-        ];
-
         # Lower priorities
         # Note this does not affect builds as they run in nix-daemon
         Nice = 19;

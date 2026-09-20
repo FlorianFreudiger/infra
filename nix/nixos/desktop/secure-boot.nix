@@ -26,6 +26,12 @@
 
         autoGenerateKeys.enable = true;
         autoEnrollKeys.enable = true;
+
+        # Assess boot entries by counting tries before marking as good or bad
+        bootCounting.initialTries = 3;
+
+        # Limit number of boot entries in order to avoid filling up the ESP
+        configurationLimit = 32;
       };
 
       ## TPM2 support ##

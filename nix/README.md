@@ -98,12 +98,14 @@ git -C ./secrets add rekeyed/<hostname>
 
 8. Copy over nixos configuration to host:
 
-While we could also deploy remotely, this way we have a local copy and auto-upgrades work
+While we could also deploy remotely, this way we have a local copy and auto-upgrades work.
+First copy over the flake to the host into your preferred location.
+Then run `./promote-to-etc-nixos.sh` on the host to copy it into `/etc/nixos`.
 
 ```bash
 # Your machine
-ssh <user>@<host> sudo chown <user> /etc/nixos
-rsync -a --progress -e ssh --exclude='result*' --exclude='*.img' ./ <user>@<host>:/etc/nixos
+rsync -a --progress -e ssh --exclude='result*' --exclude='*.img' ./ <user>@<host>:~/nixos
+ssh <user>@<host> 'cd ~/nixos && ./promote-to-etc-nixos.sh'
 ```
 
 9. Connect to host and switch to the new configuration:

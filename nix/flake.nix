@@ -43,7 +43,7 @@
     };
 
     lanzaboote = {
-      url = "github:nix-community/lanzaboote/v1.0.0";
+      url = "github:nix-community/lanzaboote/v1.1.0";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -56,7 +56,7 @@
     };
 
     autoaspm = {
-      url = "git+https://git.notthebe.ee/notthebee/AutoASPM.git";
+      url = "git+https://git.notthebe.ee/notthebee/AutoASPM.git?rev=11e921446423582836fb5b290e053fc7c6643efe";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };

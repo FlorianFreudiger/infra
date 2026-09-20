@@ -21,5 +21,10 @@
 
       # Set low-end hostFacts to ensure bootstrapping works on all devices, can be overridden afterwards
       infra.hostFacts.memoryMiB = 0;
+      
+      # Allow members of wheel group to sudo without password
+      # Needed since no password is set
+      # Someone who has access to bootstrap a system already has full access to it anyways
+      security.sudo.wheelNeedsPassword = false;
     };
 }

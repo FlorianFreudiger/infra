@@ -1,15 +1,37 @@
+# Try to improve system security through various means
+# - Add programs to check for potential security issues
+# - Ensure firewall is enabled
+# - Harden sudo
+# - Harden kernel
+
 { ... }:
 {
   flake.nixosModules.security =
-    { config, ... }:
     {
+      config,
+      lib,
+      pkgs,
+      ...
+    }:
+    {
+      environment.systemPackages = with pkgs; [
+        kernel-hardening-checker
+        lynis
+      ];
+
       # Ensure firewall is enabled
-      networking.firewall.enable = true;
+      networking.firewall.enable = lib.mkForce true;
 
       security = {
         sudo = {
           # Harden sudo, only allow members of wheel group to execute sudo
           execWheelOnly = true;
+
+          # Do not require repeating password in the same session for some time
+          extraConfig = "Defaults timestamp_timeout=60";
+
+          # Require password
+          wheelNeedsPassword = true;
 
           # Fall back to sudo if sudo-rs gets disabled somewhere else
           enable = !config.security.sudo-rs.enable;
@@ -21,6 +43,7 @@
 
           # Copy over relevant sudo options
           execWheelOnly = config.security.sudo.execWheelOnly;
+          extraConfig = config.security.sudo.extraConfig;
           wheelNeedsPassword = config.security.sudo.wheelNeedsPassword;
         };
       };
@@ -83,6 +106,31 @@
         # "vfat" # Enabled: External drives and UEFI
         # "xfs" # Enabled: Root filesystem
         "zonefs"
+
+        # Network modules
+        "appletalk"
+        "atm"
+        "ax25"
+        "can"
+        "netrom"
+        "rds"
+        "rose"
+        "sctp"
+        "tipc"
+        "x25"
+
+        # Other modules
+        "firewire_core"
+        "firewire_net"
+        "firewire_ohci"
+        "firewire_sbp2"
       ];
+
+      boot.kernel.sysctl = {
+        "dev.tty.ldisc_autoload" = 0; # Disable automatic loading of line discipline modules
+        "fs.suid_dumpable" = 0; # Disable core dumps for setuid programs
+        "kernel.dmesg_restrict" = 1; # Restrict access to dmesg to CAP_SYSLOG
+        "kernel.kexec_load_disabled" = 1; # Disable loading new kernel via kexec
+      };
     };
 }

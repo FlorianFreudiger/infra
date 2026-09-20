@@ -107,6 +107,8 @@
             "systemctl list-timers --no-pager"
             "systemctl list-units"
             "systemctl list-units --no-pager"
+            "systemctl list-units --failed"
+            "systemctl list-units --failed --no-pager"
             "tailscale status"
             "timedatectl"
           ];
