@@ -30,7 +30,7 @@ which are then combined to form multiple final system configurations for the dif
 | [Options](./nixos/core/options.nix) | Defines custom options used and set by other modules |
 | [Performance](./nixos/core/performance.nix) | Adjusts some performance-impacting settings based on the hardware of system |
 | [Power Efficiency](./nixos/core/power-efficiency.nix) | Use PowerTOP and AutoASPM to improve power efficiency |
-| [Secrets](./nixos/core/secrets.nix) | Secret management via [agenix](https://github.com/ryantm/agenix) + [agenix-rekey](https://github.com/oddlama/agenix-rekey), required for all modules which import secrets |
+| [Secrets](./nixos/core/secrets.nix) | Secret management via [agenix](https://github.com/ryantm/agenix) + [agenix-rekey](https://github.com/oddlama/agenix-rekey), required for all modules which import secrets. Also handles user passwords |
 | [Security](./nixos/core/security.nix) | System hardening settings |
 | [SSH](./nixos/core/ssh.nix) | Enables OpenSSH server |
 | [Users](./nixos/core/users.nix) | Adds my user along with authorized SSH keys and shells |

@@ -3,6 +3,7 @@
   flake.homeModules.shell =
     { pkgs, ... }:
     {
+      # Shell
       programs.fish = {
         enable = true;
         interactiveShellInit = ''
@@ -22,6 +23,9 @@
               end
               return 0
           end
+
+          # Replace man with batman
+          batman --export-env | source
         '';
         plugins = [
           # Jump to frequently used directories
@@ -51,6 +55,23 @@
               rounded_corners = true;
             };
           };
+        };
+      };
+
+      # Cat alternative with highlighting
+      programs.bat = {
+        enable = true;
+        extraPackages = with pkgs; [ bat-extras.batman ];
+      };
+
+      # Tldr pages for quick command reference
+      programs.tealdeer = {
+        enable = true;
+
+        # Disable periodic background updates but enable auto updates on demand
+        enableAutoUpdates = false;
+        settings = {
+          updates.auto_update = true;
         };
       };
     };

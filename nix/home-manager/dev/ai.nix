@@ -4,12 +4,48 @@
     { pkgs, lib, ... }:
     let
       deny-credential-files = [
+        # Tokens
+        "~/.cargo/credentials.toml"
+        "~/.claude.json"
         "~/.claude/.credentials.json"
+        "~/.docker/config.json"
+        "~/.git-credentials"
+        "~/.netrc"
+        "~/.npmrc"
+        "~/.pypirc"
+
+        # Shell history
+        "~/.bash_history"
+        "~/.local/share/fish/fish_history"
       ];
       block-dirs = [
-        "~/.ssh"
-        "~/.gnupg"
+        # Keys and identities
         "/run/agenix.d"
+        "~/.gnupg"
+        "~/.ssh"
+        "~/.config/age"
+        "~/.config/syncthing"
+        "~/.local/state/syncthing"
+        "~/.password-store"
+
+        # CLI tokens
+        "~/.aws"
+        "~/.azure"
+        "~/.config/gcloud"
+        "~/.config/gh"
+        "~/.copilot"
+        "~/.kube"
+
+        # Desktop secret stores
+        "~/.config/kdeconnect"
+        "~/.local/share/keyrings"
+        "~/.local/share/kwalletd"
+
+        # Browser and app sessions
+        "~/.config/chromium"
+        "~/.config/discord"
+        "~/.mozilla"
+        "~/.zen"
       ];
       read-only-dirs = [
         "/etc/nixos"
@@ -36,11 +72,14 @@
           hard_deny = [
             "$defaults"
             "Never switch, add to boot, or apply a NixOS configuration."
+            "Never run \"wsl.exe\", directly or through another program."
 
             # Try to avoid sandbox escapes through excluded commands
             "Never chain shell commands after a \"nix\" command."
             "Never use the \"nix\" command to run another unrelated command."
             "Never use unsafe options of the \"nix\" command, such as \"allow-unsafe-native-code-during-evaluation\"."
+            "Never pass \"--impure\", \"--expr\", \"--file\", \"-f\" or \"--option\" to a \"nix\" command."
+            "Never add flake inputs, \"builtins.path\" or \"builtins.fetchTree\" references that point at local paths outside the repository."
           ];
         };
 
@@ -60,6 +99,9 @@
               "Bash(*nixos-rebuild*)"
               "Bash(*nh os*)"
               "Bash(*nh home*)"
+              "Bash(*wsl.exe*)"
+              "Edit(//**/.git/config)"
+              "Edit(//**/.git/hooks/**)"
             ];
         };
 
@@ -140,7 +182,8 @@
           nativeBuildInputs = [ pkgs.makeWrapper ];
           postBuild = ''
             wrapProgram $out/bin/claude \
-              --add-flags "--settings ${claude-settings}"
+              --add-flags "--settings ${claude-settings}" \
+              --set DISABLE_TELEMETRY 1
           '';
         };
       };

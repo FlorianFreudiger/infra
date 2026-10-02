@@ -6,7 +6,7 @@
       imports = [
         self.homeModules.default
         self.homeModules.shell
-        self.homeModules.dev-all
+        self.homeModules.dev-current
       ];
     };
 }
