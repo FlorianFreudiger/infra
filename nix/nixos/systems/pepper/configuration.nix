@@ -42,86 +42,34 @@
         }
       )
 
-      # Host specific hardware-configuration
-      (
-        {
-          config,
-          lib,
-          modulesPath,
-          ...
-        }:
-        {
-          # Disable AutoASPM as enabling aspm on one pcieport caused correctable PCIe link issues and log spam
-          services.autoaspm.enable = lib.mkForce false;
+      # Include the results of the hardware scan.
+      ./hardware-configuration.nix
 
+      # Host specific additions to the generated hardware-configuration
+      (
+        { config, ... }:
+        {
           # Disable dead webcam, otherwise causes log spam and possibly interferes with system suspend/resume
           systemd.tmpfiles.rules = [ "w /sys/bus/usb/devices/usb1/1-0:1.0/usb1-port3/disable - - - - 1" ];
           powerManagement.powerDownCommands = "echo 1 > /sys/bus/usb/devices/usb1/1-0:1.0/usb1-port3/disable || true";
 
-          imports = [
-            (modulesPath + "/installer/scan/not-detected.nix")
-          ];
-
-          boot.initrd.availableKernelModules = [
-            "xhci_pci"
-            "ahci"
-            "nvme"
-            "uas"
-            "sd_mod"
-          ];
-          boot.initrd.kernelModules = [ ];
-          boot.kernelModules = [ "kvm-intel" ];
-          boot.extraModulePackages = [ ];
           # Enable HP mute LED
           boot.extraModprobeConfig = "options snd-hda-intel model=hp-mute-led-mic3";
 
-          boot.initrd.luks.devices."cryptroot".device =
-            "/dev/disk/by-uuid/ccd7feb5-2151-4d81-a076-8bd4250ea5d9";
-
-          fileSystems."/boot" = {
-            device = "/dev/disk/by-uuid/5372-6FEF";
-            fsType = "vfat";
-            options = [
-              "umask=0077"
-              "fmask=0077"
-              "dmask=0077"
-            ];
-          };
-
-          fileSystems."/" = {
-            device = "/dev/mapper/cryptroot";
-            fsType = "btrfs";
-            options = [
-              "subvol=@root"
-              "compress=zstd"
-              "noatime"
-            ];
-          };
-
-          fileSystems."/home" = {
-            device = "/dev/mapper/cryptroot";
-            fsType = "btrfs";
-            options = [
-              "subvol=@home"
-              "compress=zstd"
-              "noatime"
-            ];
-          };
-
-          fileSystems."/nix" = {
-            device = "/dev/mapper/cryptroot";
-            fsType = "btrfs";
-            options = [
-              "subvol=@nix"
-              "compress=zstd"
-              "noatime"
-            ];
-          };
-
-          swapDevices = [ ];
-
-          nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
-          hardware.cpu.intel.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
+          # Additional mount options for the generated filesystems
+          fileSystems."/boot".options = [ "umask=0077" ];
+          fileSystems."/".options = [
+            "compress=zstd"
+            "noatime"
+          ];
+          fileSystems."/home".options = [
+            "compress=zstd"
+            "noatime"
+          ];
+          fileSystems."/nix".options = [
+            "compress=zstd"
+            "noatime"
+          ];
 
           ## GPU configuration ##
           nixpkgs.config.allowUnfreePackages = [

@@ -1,8 +1,7 @@
 # Try to increase power efficiency by:
 # - PowerTOP: Apply some recommended power-saving tweaks
-# - AutoASPM: Activate PCIe Active State Power Management (ASPM) on supported devices
 
-{ inputs, ... }:
+{ ... }:
 {
   flake.nixosModules.power-efficiency =
     { pkgs, ... }:
@@ -15,11 +14,5 @@
 
       ## PowerTOP ##
       powerManagement.powertop.enable = true;
-
-      ## AutoASPM ##
-      imports = [
-        inputs.autoaspm.nixosModules.default
-      ];
-      services.autoaspm.enable = true;
     };
 }

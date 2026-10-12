@@ -12,7 +12,8 @@ src="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)"
 host="$(hostname)"
 
 # Abort unless flake contains config for this host.
-if ! grep -q "nixosConfigurations.$host" "$src/nixos/systems/$host.nix" 2>/dev/null; then
+if ! grep -q "nixosConfigurations.$host" \
+    "$src/nixos/systems/$host.nix" "$src/nixos/systems/$host/configuration.nix" 2>/dev/null; then
     echo "error: '$host' is not a host targeted by this config" >&2
     exit 1
 fi

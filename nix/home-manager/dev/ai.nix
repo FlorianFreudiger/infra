@@ -50,6 +50,60 @@
       read-only-dirs = [
         "/etc/nixos"
       ];
+      sandbox-excluded-commands = [
+        # Nix commands require nix-daemon
+        "nix path-info *"
+        "nix derivation *"
+        "nix why-depends *"
+        "nix log *"
+        "nix store diff-closures *"
+        "nix build *"
+        "nix eval *"
+        "nix flake check *"
+        "nix flake metadata *"
+        "nix flake show *"
+
+        # Diagnostics that require dbus or netns
+        # No wildcards so they can not be used to chain commands.
+        "hostnamectl"
+        "ip -br addr"
+        "ip route"
+        "loginctl"
+        "loginctl list-sessions --no-pager"
+        "loginctl list-users --no-pager"
+        "loginctl list-seats --no-pager"
+        "resolvectl status"
+        "systemctl --failed --no-pager"
+        "systemctl list-timers --no-pager"
+        "systemctl list-timers --all --no-pager"
+        "systemctl list-units --no-pager"
+        "systemctl list-units --all --no-pager"
+        "systemctl list-units --failed --no-pager"
+        "systemctl list-unit-files --no-pager"
+        "systemd-analyze blame --no-pager"
+        "tailscale status"
+        "timedatectl"
+      ];
+
+      # Appended to the system prompt, so new sessions know about the sandbox limits up front
+      claude-sandbox-prompt = pkgs.writeText "claude-sandbox-prompt.md" ''
+        # Bash sandbox limits on this machine
+
+        Bash commands run in a bubblewrap sandbox with its own network namespace. Unix domain sockets cannot be connected to.
+        Anything that talks to a local daemon fails inside it:
+        - D-Bus: systemctl, loginctl, hostnamectl, timedatectl, resolvectl, busctl, notify-send
+        - nix-daemon: most `nix` subcommands
+        - tailscaled, and the host's real network interfaces and routes (only `lo` is visible)
+
+        Errors like "Failed to connect to bus ... Operation not permitted", or a failed connection to the nix-daemon socket, come from the sandbox, not from a broken system.
+        Don't work around them with other socket paths, `DBUS_*` or `NIX_REMOTE` variables, or wrapper programs.
+
+        Only these commands run outside the sandbox. Patterns ending in `*` accept arguments; the rest must be run exactly as written.
+        When run, they should be executed as a standalone command and their output should be processed in a separate step.
+        ${lib.concatMapStringsSep "\n" (c: "- `${c}`") sandbox-excluded-commands}
+
+        If you need something none of them provide, say so and ask the user to run the command themselves with a `!` prefix.
+      '';
 
       # Absolute paths require double leading slashes in claude's permissions rules
       claude-rule-path = p: if lib.hasPrefix "/" p then "/" + p else p;
@@ -124,43 +178,7 @@
             }) deny-credential-files;
           };
 
-          excludedCommands = [
-            # Nix commands require nix-daemon
-            "nix path-info *"
-            "nix derivation *"
-            "nix why-depends *"
-            "nix log *"
-            "nix store diff-closures *"
-            "nix build *"
-            "nix eval *"
-            "nix flake check *"
-            "nix flake metadata *"
-            "nix flake show *"
-
-            # Diagnostics that require dbus or netns
-            # No wildcards so they can not be used to chain commands.
-            "hostnamectl"
-            "ip -br addr"
-            "ip route"
-            "loginctl"
-            "loginctl list-sessions"
-            "loginctl list-sessions --no-pager"
-            "loginctl list-users"
-            "loginctl list-users --no-pager"
-            "loginctl list-seats"
-            "loginctl list-seats --no-pager"
-            "resolvectl status"
-            "systemctl --failed"
-            "systemctl --failed --no-pager"
-            "systemctl list-timers"
-            "systemctl list-timers --no-pager"
-            "systemctl list-units"
-            "systemctl list-units --no-pager"
-            "systemctl list-units --failed"
-            "systemctl list-units --failed --no-pager"
-            "tailscale status"
-            "timedatectl"
-          ];
+          excludedCommands = sandbox-excluded-commands;
         };
 
         ### UX ###
@@ -190,6 +208,7 @@
           postBuild = ''
             wrapProgram $out/bin/claude \
               --add-flags "--settings ${claude-settings}" \
+              --add-flags "--append-system-prompt-file ${claude-sandbox-prompt}" \
               --set DISABLE_TELEMETRY 1
           '';
         };

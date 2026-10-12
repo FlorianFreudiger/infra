@@ -52,11 +52,6 @@
         home-manager.follows = "home-manager";
       };
     };
-
-    autoaspm = {
-      url = "git+https://git.notthebe.ee/notthebee/AutoASPM.git?rev=11e921446423582836fb5b290e053fc7c6643efe";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
   };
 
   outputs =
@@ -68,7 +63,8 @@
       ];
 
       imports = [
-        (inputs.import-tree ./nixos)
+        # Ignore auto-generated hardware-configuration.nix files
+        (inputs.import-tree.matchNot ".*/hardware-configuration\\.nix" ./nixos)
 
         inputs.home-manager.flakeModules.home-manager
         (inputs.import-tree ./home-manager)

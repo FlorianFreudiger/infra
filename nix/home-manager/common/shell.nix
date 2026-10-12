@@ -14,12 +14,18 @@
               string match -qr '^\\s' -- $argv; and return 1
 
               # Do not remember power commands
-              set -l argc (count $argv)
-              if test $argc -ge 2 -a $argv[1] = sudo
-                switch $argv[2]
-                  case reboot shutdown poweroff
-                    return 1
-                end
+              set -l cmd (string split -n ' ' -- $argv[1])
+              test "$cmd[1]" = sudo; and set -e cmd[1]
+              switch "$cmd[1]"
+                case halt poweroff reboot shutdown
+                  return 1
+                case systemctl
+                  # First non-option argument is the systemctl command
+                  set -l verb (string match -v -- '-*' $cmd[2..])[1]
+                  switch "$verb"
+                    case emergency halt hibernate hybrid-sleep kexec poweroff reboot rescue sleep soft-reboot suspend suspend-then-hibernate
+                      return 1
+                  end
               end
               return 0
           end

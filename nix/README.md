@@ -29,7 +29,7 @@ which are then combined to form multiple final system configurations for the dif
 | [Network](./nixos/core/network.nix) | Installs [Tailscale](https://tailscale.com/) and other network quirks |
 | [Options](./nixos/core/options.nix) | Defines custom options used and set by other modules |
 | [Performance](./nixos/core/performance.nix) | Adjusts some performance-impacting settings based on the hardware of system |
-| [Power Efficiency](./nixos/core/power-efficiency.nix) | Use PowerTOP and AutoASPM to improve power efficiency |
+| [Power Efficiency](./nixos/core/power-efficiency.nix) | Use PowerTOP to improve power efficiency |
 | [Secrets](./nixos/core/secrets.nix) | Secret management via [agenix](https://github.com/ryantm/agenix) + [agenix-rekey](https://github.com/oddlama/agenix-rekey), required for all modules which import secrets. Also handles user passwords |
 | [Security](./nixos/core/security.nix) | System hardening settings |
 | [SSH](./nixos/core/ssh.nix) | Enables OpenSSH server |
@@ -60,10 +60,10 @@ Final configurations for specific hosts, using the appropriate profile + host-sp
 
 | System | Uses profile | Description |
 | :---: | :---: | :--- |
-| [Blueberry](./nixos/systems/blueberry.nix) | Server | Raspberry Pi 3b+ |
-| [Broccoli](./nixos/systems/broccoli.nix) | Desktop | Dual-boot PC |
+| [Blueberry](./nixos/systems/blueberry/configuration.nix) | Server | Raspberry Pi 3b+ |
+| [Broccoli](./nixos/systems/broccoli/configuration.nix) | Desktop | Dual-boot PC |
 | [PC WSL](./nixos/systems/pc-wsl.nix) | WSL | WSL setup on my PC |
-| [Pepper](./nixos/systems/pepper.nix) | Desktop | HP Laptop |
+| [Pepper](./nixos/systems/pepper/configuration.nix) | Desktop | HP Laptop |
 | Misc: [Setup images](./nixos/systems/setup-images.nix) | Bootstrap | CD installer and SD card images for initial deployments |
 
 
@@ -72,7 +72,7 @@ Final configurations for specific hosts, using the appropriate profile + host-sp
 1. Build one of the [setup images](./nixos/systems/setup-images.nix), flash to storage media
 2. Boot host and wait for it to be reachable via ssh
 3. Perform the necessary partitioning and formatting steps
-4. Define new host in `nixos/systems/<hostname>.nix`, use `nixos-generate-config --show-hardware-config` on new host to get hardware-configuration
+4. Define new host in `nixos/systems/<hostname>/configuration.nix`, save the output of `nixos-generate-config --show-hardware-config` on new host unmodified as `nixos/systems/<hostname>/hardware-configuration.nix` and import it
 5. Reboot into the new system
 6. Generate facter file on new host:
 

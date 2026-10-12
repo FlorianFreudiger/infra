@@ -47,80 +47,26 @@
         }
       )
 
-      # Host specific hardware-configuration
+      # Include the results of the hardware scan.
+      ./hardware-configuration.nix
+
+      # Host specific additions to the generated hardware-configuration
       (
+        { ... }:
         {
-          config,
-          lib,
-          modulesPath,
-          ...
-        }:
-        {
-          services.autoaspm.enable = lib.mkForce false;
-
-          imports = [
-            (modulesPath + "/installer/scan/not-detected.nix")
+          # Additional mount options for the generated btrfs subvolumes
+          fileSystems."/".options = [
+            "compress=zstd"
+            "noatime"
           ];
-
-          boot.initrd.availableKernelModules = [
-            "vmd"
-            "xhci_pci"
-            "ahci"
-            "nvme"
-            "usbhid"
-            "usb_storage"
-            "sd_mod"
+          fileSystems."/home".options = [
+            "compress=zstd"
+            "noatime"
           ];
-          boot.initrd.kernelModules = [ ];
-          boot.kernelModules = [ "kvm-intel" ];
-          boot.extraModulePackages = [ ];
-
-          fileSystems."/" = {
-            device = "/dev/mapper/cryptroot";
-            fsType = "btrfs";
-            options = [
-              "subvol=@root"
-              "compress=zstd"
-              "noatime"
-            ];
-          };
-
-          boot.initrd.luks.devices."cryptroot".device =
-            "/dev/disk/by-uuid/f6728a29-c471-4669-9d6f-4f49a6e8917c";
-
-          fileSystems."/home" = {
-            device = "/dev/mapper/cryptroot";
-            fsType = "btrfs";
-            options = [
-              "subvol=@home"
-              "compress=zstd"
-              "noatime"
-            ];
-          };
-
-          fileSystems."/nix" = {
-            device = "/dev/mapper/cryptroot";
-            fsType = "btrfs";
-            options = [
-              "subvol=@nix"
-              "compress=zstd"
-              "noatime"
-            ];
-          };
-
-          fileSystems."/boot" = {
-            device = "/dev/disk/by-uuid/4FD9-8151";
-            fsType = "vfat";
-            options = [
-              "fmask=0077"
-              "dmask=0077"
-            ];
-          };
-
-          swapDevices = [ ];
-
-          nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
-          hardware.cpu.intel.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
+          fileSystems."/nix".options = [
+            "compress=zstd"
+            "noatime"
+          ];
 
           ## GPU configuration ##
           nixpkgs.config.allowUnfreePackages = [
