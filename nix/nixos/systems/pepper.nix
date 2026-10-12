@@ -13,6 +13,11 @@
           system.stateVersion = "25.11";
           networking.hostName = "pepper";
 
+          infra.hostFacts.rootDrive = {
+            isSSD = true;
+            supportsTrim = true;
+          };
+
           # Add Home Manager configuration for user
           home-manager.users.turtle = {
             home.stateVersion = "25.11";
@@ -70,14 +75,8 @@
           # Enable HP mute LED
           boot.extraModprobeConfig = "options snd-hda-intel model=hp-mute-led-mic3";
 
-          boot.initrd.luks.devices."cryptroot" = {
-            device = "/dev/disk/by-uuid/ccd7feb5-2151-4d81-a076-8bd4250ea5d9";
-            # Enable automatic unlock
-            crypttabExtraOpts = [
-              "tpm2-device=auto"
-              "tpm2-measure-pcr=yes"
-            ];
-          };
+          boot.initrd.luks.devices."cryptroot".device =
+            "/dev/disk/by-uuid/ccd7feb5-2151-4d81-a076-8bd4250ea5d9";
 
           fileSystems."/boot" = {
             device = "/dev/disk/by-uuid/5372-6FEF";
@@ -92,19 +91,31 @@
           fileSystems."/" = {
             device = "/dev/mapper/cryptroot";
             fsType = "btrfs";
-            options = [ "subvol=@root" ];
+            options = [
+              "subvol=@root"
+              "compress=zstd"
+              "noatime"
+            ];
           };
 
           fileSystems."/home" = {
             device = "/dev/mapper/cryptroot";
             fsType = "btrfs";
-            options = [ "subvol=@home" ];
+            options = [
+              "subvol=@home"
+              "compress=zstd"
+              "noatime"
+            ];
           };
 
           fileSystems."/nix" = {
             device = "/dev/mapper/cryptroot";
             fsType = "btrfs";
-            options = [ "subvol=@nix" ];
+            options = [
+              "subvol=@nix"
+              "compress=zstd"
+              "noatime"
+            ];
           };
 
           swapDevices = [ ];

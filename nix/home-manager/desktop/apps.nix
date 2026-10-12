@@ -11,7 +11,10 @@
 
       home.packages = with pkgs; [
         keepassxc
-        jetbrains-toolbox
+        (jetbrains-toolbox.override {
+          # Fix download link
+          fetchzip = a: fetchzip (a // { url = lib.replaceStrings [ "-cdn" ] [ "" ] a.url; });
+        })
         signal-desktop
         vscode
       ];
@@ -22,5 +25,10 @@
       };
 
       programs.ghostty.enable = true;
+
+      services.tailscale-systray = {
+        enable = true;
+        theme = "light:nobg";
+      };
     };
 }

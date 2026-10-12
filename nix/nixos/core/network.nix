@@ -1,4 +1,4 @@
-{ self, ... }:
+{ ... }:
 {
   flake.nixosModules.network =
     { config, lib, ... }:
@@ -29,26 +29,19 @@
 
       services.tailscale = {
         enable = true;
-        extraUpFlags = [
-          "--accept-routes"
-          # Set hostname manually since Tailscale might be applied before specified hostname
-          ("--hostname=" + config.networking.hostName)
-        ];
+        # Devices are registered manually with `tailscale up`
+        # Set flags are reapplied on every boot
         extraSetFlags = [
           "--accept-routes"
-        ];
+        ]
+        # Allow the user to control Tailscale without sudo on desktops, e.g. via tailscale-systray
+        ++ lib.optional config.infra.hostFacts.isDesktop "--operator=turtle";
+
         extraDaemonFlags = [ "--no-logs-no-support" ]; # Disable telemetry
 
         # Configure network settings to allow direct connections and routing features
         openFirewall = true;
         useRoutingFeatures = "both";
-
-        authKeyFile = config.age.secrets.tailscale-authkey.path;
-        authKeyParameters.ephemeral = false;
-      };
-
-      age.secrets.tailscale-authkey = {
-        rekeyFile = self + "/secrets/master/tailscale-authkey.age";
       };
 
       # Use nftables if enabled

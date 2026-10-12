@@ -26,7 +26,7 @@ which are then combined to form multiple final system configurations for the dif
 | [Facter](./nixos/core/facter.nix) | [Nixos-facter](https://github.com/nix-community/nixos-facter) derives hardware configuration from generated file |
 | [Home Manager](./nixos/core/home-manager.nix) | Sets common [Home Manager](https://github.com/nix-community/home-manager) options |
 | [Maintenance](./nixos/core/maintenance.nix) | Enables automatic upgrades and garbage-collection |
-| [Network](./nixos/core/network.nix) | Sets up [Tailscale](https://tailscale.com/) and other network quirks |
+| [Network](./nixos/core/network.nix) | Installs [Tailscale](https://tailscale.com/) and other network quirks |
 | [Options](./nixos/core/options.nix) | Defines custom options used and set by other modules |
 | [Performance](./nixos/core/performance.nix) | Adjusts some performance-impacting settings based on the hardware of system |
 | [Power Efficiency](./nixos/core/power-efficiency.nix) | Use PowerTOP and AutoASPM to improve power efficiency |
@@ -61,6 +61,7 @@ Final configurations for specific hosts, using the appropriate profile + host-sp
 | System | Uses profile | Description |
 | :---: | :---: | :--- |
 | [Blueberry](./nixos/systems/blueberry.nix) | Server | Raspberry Pi 3b+ |
+| [Broccoli](./nixos/systems/broccoli.nix) | Desktop | Dual-boot PC |
 | [PC WSL](./nixos/systems/pc-wsl.nix) | WSL | WSL setup on my PC |
 | [Pepper](./nixos/systems/pepper.nix) | Desktop | HP Laptop |
 | Misc: [Setup images](./nixos/systems/setup-images.nix) | Bootstrap | CD installer and SD card images for initial deployments |

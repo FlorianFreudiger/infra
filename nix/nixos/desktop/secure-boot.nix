@@ -1,12 +1,18 @@
 # Configuration for
-# Lanzaboote: Secure Boot for NixOS
-# + TPM2 support
-# + Script to enroll luks keys into the TPM
+# - Lanzaboote: Secure Boot for NixOS
+# - TPM2 support and automatic LUKS unlock
+# - LUKS tuning for SSDs (bypass workqueues, TRIM passthrough)
+# - Script to enroll LUKS keys into the TPM
 
 { inputs, ... }:
 {
   flake.nixosModules.secure-boot =
-    { pkgs, lib, ... }:
+    {
+      config,
+      pkgs,
+      lib,
+      ...
+    }:
     {
       ## Lanzaboote: Secure Boot for NixOS ##
       imports = [
@@ -37,6 +43,21 @@
       ## TPM2 support ##
       boot.initrd.systemd.enable = true;
       boot.initrd.systemd.tpm2.enable = true;
+
+      # Configure the root LUKS device if root is on cryptroot
+      boot.initrd.luks.devices.cryptroot =
+        lib.mkIf (config.fileSystems."/".device or null == "/dev/mapper/cryptroot")
+          {
+            # Enable automatic unlock via TPM2
+            crypttabExtraOpts = [
+              "tpm2-device=auto"
+              "tpm2-measure-pcr=yes"
+            ];
+            # Disabling dm-crypt workqueues improves performance on SSDs
+            bypassWorkqueues = lib.mkIf (config.infra.hostFacts.rootDrive.isSSD == true) true;
+            # Pass TRIM through to the drive, if supported
+            allowDiscards = lib.mkIf (config.infra.hostFacts.rootDrive.supportsTrim == true) true;
+          };
 
       security.tpm2 = {
         enable = true;

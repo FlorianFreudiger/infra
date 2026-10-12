@@ -6,7 +6,7 @@
       services.desktopManager.plasma6.enable = true;
       services.displayManager.sddm = {
         enable = true;
-        wayland.enable = true;
+        wayland.enable = true; # Can cause hangs (sddm/sddm#2129)
       };
       programs.xwayland.enable = true;
 
@@ -35,9 +35,15 @@
         kdePackages.spectacle # Screenshot tool
         kdiff3 # File/directory comparison tool
         vlc # Media player
+
+        # Other tools
+        age-plugin-yubikey # Age plugin for YubiKey support
       ];
 
       # Connect to phone and other devices, will open ports in firewall
       programs.kdeconnect.enable = true;
+
+      # Enable daemon for smart card access, required by age-plugin-yubikey
+      services.pcscd.enable = true;
     };
 }

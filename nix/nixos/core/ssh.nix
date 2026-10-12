@@ -13,6 +13,9 @@
         };
       };
 
+      # Add terminfo for other terminals like ghostty, kitty, etc. to avoid terminal issues
+      environment.enableAllTerminfo = true;
+
       services.fail2ban = {
         enable = true;
       };

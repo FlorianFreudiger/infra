@@ -19,6 +19,9 @@
       modules = [
         "${inputs.nixpkgs}/nixos/modules/installer/cd-dvd/installation-cd-graphical-calamares-plasma6.nix"
         self.nixosModules.bootstrap
+        {
+          infra.hostFacts.isDesktop = true;
+        }
       ];
     };
 

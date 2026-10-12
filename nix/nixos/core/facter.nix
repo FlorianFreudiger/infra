@@ -6,14 +6,13 @@
       reportPath = self + "/secrets/hosts/${config.networking.hostName}/facter.json";
     in
     {
-      hardware.facter =
-        {
-          # Do not use dhcpcd if NetworkManager is enabled, as it has its own DHCP client
-          detected.dhcp.enable = lib.mkIf config.networking.networkmanager.enable false;
-        }
-        // lib.optionalAttrs (builtins.pathExists reportPath) {
-          reportPath = reportPath;
-        };
+      hardware.facter = {
+        # Do not use dhcpcd if NetworkManager is enabled, as it has its own DHCP client
+        detected.dhcp.enable = lib.mkIf config.networking.networkmanager.enable false;
+      }
+      // lib.optionalAttrs (builtins.pathExists reportPath) {
+        reportPath = reportPath;
+      };
 
       warnings = lib.optional (
         !builtins.pathExists reportPath

@@ -24,6 +24,8 @@
         self.nixosModules.secure-boot
       ];
 
+      infra.hostFacts.isDesktop = true;
+
       # Set autoUpgrades to not switch until next boot
       system.autoUpgrade.operation = "boot";
     };
