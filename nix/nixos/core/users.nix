@@ -3,10 +3,14 @@
   flake.nixosModules.users =
     { lib, pkgs, ... }:
     let
-      authorizedKeysDir = ../../secrets/authorized_keys/turtle;
-      authorizedKeysFiles = lib.fileset.toList (
-        lib.fileset.fileFilter (file: file.hasExt "pub") authorizedKeysDir
-      );
+      # Map of user to their public keys in secrets/users/<user>/authorized_keys/*.pub
+      usersDir = ../../secrets/users;
+      authorizedKeysFiles = lib.mapAttrs (
+        user: _:
+        lib.fileset.toList (
+          lib.fileset.fileFilter (file: file.hasExt "pub") (usersDir + "/${user}/authorized_keys")
+        )
+      ) (builtins.readDir usersDir);
     in
     {
       users = {
@@ -18,7 +22,7 @@
             isNormalUser = true;
             extraGroups = [ "wheel" ];
             shell = pkgs.fish;
-            openssh.authorizedKeys.keyFiles = authorizedKeysFiles;
+            openssh.authorizedKeys.keyFiles = authorizedKeysFiles.turtle;
             # User password is set in the secrets module, as it requires agenix being loaded
             # which is not available in the bootstrap profile, which loads this module.
           };

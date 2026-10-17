@@ -8,7 +8,7 @@
 
       # Host specific configuration
       (
-        { pkgs, ... }:
+        { config, pkgs, ... }:
         {
           system.stateVersion = "25.11";
           networking.hostName = "pepper";
@@ -39,6 +39,12 @@
           # Configure network connections interactively with nmcli or nmtui.
           networking.networkmanager.enable = true;
           networking.networkmanager.plugins = [ pkgs.networkmanager-openvpn ];
+
+          # Add Notebook Fan Control
+          environment.systemPackages = [
+            inputs.nixpkgs-unstable.legacyPackages.${pkgs.stdenv.hostPlatform.system}.nbfc-linux
+          ];
+          boot.extraModulePackages = [ config.boot.kernelPackages.acpi_call ];
         }
       )
 
@@ -53,8 +59,10 @@
           systemd.tmpfiles.rules = [ "w /sys/bus/usb/devices/usb1/1-0:1.0/usb1-port3/disable - - - - 1" ];
           powerManagement.powerDownCommands = "echo 1 > /sys/bus/usb/devices/usb1/1-0:1.0/usb1-port3/disable || true";
 
-          # Enable HP mute LED
-          boot.extraModprobeConfig = "options snd-hda-intel model=hp-mute-led-mic3";
+          # Enable HP mute LED and writing to the fan controller
+          boot.extraModprobeConfig = ''
+            options snd-hda-intel model=hp-mute-led-mic3
+            options ec_sys write_support=1'';
 
           # Additional mount options for the generated filesystems
           fileSystems."/boot".options = [ "umask=0077" ];

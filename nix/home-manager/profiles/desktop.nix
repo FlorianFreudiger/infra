@@ -8,6 +8,7 @@
         self.homeModules.desktop-apps
         self.homeModules.browser
         self.homeModules.sync
+        self.homeModules.ssh-client
       ];
     };
 }

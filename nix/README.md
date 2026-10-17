@@ -58,13 +58,13 @@ Combined set of modules + configuration for specific use-cases
 
 Final configurations for specific hosts, using the appropriate profile + host-specific configuration settings
 
-| System | Uses profile | Description |
-| :---: | :---: | :--- |
-| [Blueberry](./nixos/systems/blueberry/configuration.nix) | Server | Raspberry Pi 3b+ |
-| [Broccoli](./nixos/systems/broccoli/configuration.nix) | Desktop | Dual-boot PC |
-| [PC WSL](./nixos/systems/pc-wsl.nix) | WSL | WSL setup on my PC |
-| [Pepper](./nixos/systems/pepper/configuration.nix) | Desktop | HP Laptop |
-| Misc: [Setup images](./nixos/systems/setup-images.nix) | Bootstrap | CD installer and SD card images for initial deployments |
+| System | Uses profile | Description | Notes |
+| :---: | :---: | :--- | :--- |
+| [Blueberry](./nixos/systems/blueberry/configuration.nix) | Server | Raspberry Pi 3b+ | |
+| [Broccoli](./nixos/systems/broccoli/configuration.nix) | Desktop | Dual-boot PC | |
+| [PC WSL](./nixos/systems/pc-wsl.nix) | WSL | WSL setup on my PC | |
+| [Pepper](./nixos/systems/pepper/configuration.nix) | Desktop | HP Laptop | Defect USB controller: no USB2 or webcam |
+| Misc: [Setup images](./nixos/systems/setup-images.nix) | Bootstrap | CD installer and SD card images for initial deployments | |
 
 
 ## Deploy to new host

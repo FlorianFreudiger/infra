@@ -72,6 +72,8 @@
         "loginctl list-sessions --no-pager"
         "loginctl list-users --no-pager"
         "loginctl list-seats --no-pager"
+        "nvidia-smi"
+        "powerprofilesctl"
         "resolvectl status"
         "systemctl --failed --no-pager"
         "systemctl list-timers --no-pager"
