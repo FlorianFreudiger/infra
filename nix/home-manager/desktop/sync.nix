@@ -1,8 +1,4 @@
 { self, ... }:
-let
-  # Keep syncthing devices and folders in secrets
-  syncthing = import (self + "/secrets/syncthing.nix");
-in
 {
   flake.homeModules.sync =
     {
@@ -11,6 +7,10 @@ in
       osConfig,
       ...
     }:
+    let
+      # Keep syncthing devices, folders and GUI password of this user in secrets
+      syncthing = import (self + "/secrets/users/${config.home.username}/syncthing.nix");
+    in
     {
       # Keep an option available to exclude this device from device list if hostname is not set
       options.infra.syncthing.deviceName = lib.mkOption {
@@ -24,6 +24,11 @@ in
         # Keep devices and folders added in the web interface
         overrideDevices = false;
         overrideFolders = false;
+
+        guiCredentials = {
+          username = config.home.username;
+          passwordFile = builtins.toFile "syncthing-gui-password-hash" syncthing.guiPasswordHash;
+        };
 
         settings = {
           # Exclude this device from devices

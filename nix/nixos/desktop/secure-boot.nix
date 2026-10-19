@@ -37,7 +37,7 @@
         bootCounting.initialTries = 3;
 
         # Limit number of boot entries in order to avoid filling up the ESP
-        configurationLimit = 32;
+        configurationLimit = 8;
       };
 
       ## TPM2 support ##
@@ -105,8 +105,8 @@
             read -r -s -p "Press Enter to (re-)enroll TPM, or Ctrl-C to abort."
 
             echo "Enrolling TPM for $luks_dev"
-            systemd-cryptenroll "$luks_dev" --wipe-slot=tpm2
-            systemd-cryptenroll "$luks_dev" --tpm2-device=auto --tpm2-pcrs="$PCRS"
+            systemd-cryptenroll "$luks_dev" --wipe-slot=tpm2 \
+              --tpm2-device=auto --tpm2-pcrs="$PCRS"
 
             echo
             echo "New keyslots of $luks_dev:"

@@ -4,6 +4,7 @@
     { config, lib, ... }:
     let
       hostPubkeyPath = self + "/secrets/hosts/${config.networking.hostName}/ssh_host_ed25519_key.pub";
+      hashedPasswordPath = user: self + "/secrets/users/${user}/hashed-password.age";
     in
     {
       imports = [
@@ -26,11 +27,9 @@
         hostPubkey = builtins.readFile hostPubkeyPath;
       };
 
-      # Set user passwords here
-      # If this module is not loaded, then the users won't have a password set and can't login with it
-      users.users.turtle.hashedPasswordFile = config.age.secrets.users-turtle-hashed-password.path;
-      age.secrets.users-turtle-hashed-password = {
-        rekeyFile = self + "/secrets/master/users-turtle-hashed-password.age";
-      };
+      # Hashed passwords of users on this host, used in the users module
+      age.secrets = lib.mapAttrs' (
+        user: _: lib.nameValuePair "users-${user}-hashed-password" { rekeyFile = hashedPasswordPath user; }
+      ) (lib.filterAttrs (user: _: builtins.pathExists (hashedPasswordPath user)) config.users.users);
     };
 }

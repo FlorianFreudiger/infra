@@ -10,6 +10,19 @@
       };
       programs.xwayland.enable = true;
 
+      # User defaults
+      services.xserver.xkb.layout = "de";
+      i18n.extraLocaleSettings.LC_TIME = "de_DE.UTF-8";
+      environment.etc."xdg/kcminputrc".text = ''
+        [Libinput][Defaults][Touchpad]
+        NaturalScroll=true
+      '';
+      environment.etc."xdg/kxkbrc".text = ''
+        [Layout]
+        LayoutList=de
+        Use=true
+      '';
+
       # Add RealtimeKit to allow PipeWire to acquire realtime scheduling priority
       security.rtkit.enable = true;
 

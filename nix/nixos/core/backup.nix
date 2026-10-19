@@ -27,6 +27,14 @@
             */.vscode-server
             */.vscode-remote-containers
             */.local/lib
+            */.local/share/flatpak
+            */.local/share/Steam/appcache
+            */.local/share/Steam/depotcache
+            */.local/share/Steam/steamapps/common
+            */.local/share/Steam/steamapps/downloading
+            */.local/share/Steam/steamapps/shadercache
+            */.local/share/Steam/steamapps/temp
+            */.local/share/Steam/steamapps/workshop
             */.local/share/Trash
             */go
             */snap

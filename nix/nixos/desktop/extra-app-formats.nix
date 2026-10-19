@@ -45,20 +45,19 @@
       ## Flatpak ##
       services.flatpak.enable = true;
 
-      # Add flathub repo automatically
-      systemd.services.flatpak-add-flathub-repo = {
-        wantedBy = [ "multi-user.target" ];
+      # Add per-user flathub repo automatically
+      systemd.user.services.flatpak-add-flathub-repo = {
+        wantedBy = [ "default.target" ];
         path = [ pkgs.flatpak ];
 
         # Skip if flathub is already added, assuming config file is at default location
-        unitConfig.ConditionPathExists = [ "/var/lib/flatpak/repo/config" ];
         serviceConfig.ExecCondition = [
-          "${pkgs.bash}/bin/bash -c \"! ${pkgs.gnugrep}/bin/grep -qF '[remote \\\"flathub\\\"]' /var/lib/flatpak/repo/config\""
+          "${pkgs.bash}/bin/bash -c \"! ${pkgs.gnugrep}/bin/grep -qsF '[remote \\\"flathub\\\"]' %h/.local/share/flatpak/repo/config\""
         ];
 
         script = ''
           set -euo pipefail
-          flatpak remote-add --system --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+          flatpak remote-add --user --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
         '';
       };
     };

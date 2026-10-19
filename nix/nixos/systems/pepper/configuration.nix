@@ -5,6 +5,7 @@
     modules = [
       # Import specific nixos profile
       self.nixosModules.desktop
+      self.nixosModules.gaming
 
       # Host specific configuration
       (

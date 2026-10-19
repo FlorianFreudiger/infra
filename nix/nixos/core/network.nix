@@ -49,6 +49,12 @@
         "TS_DEBUG_FIREWALL_MODE=nftables"
       ];
 
+      # Add all normal users to networkmanager group,
+      # so connections are saved for all users and connect before login
+      users.groups.networkmanager = lib.mkIf config.networking.networkmanager.enable {
+        members = lib.attrNames (lib.filterAttrs (_: user: user.isNormalUser) config.users.users);
+      };
+
       # Increase UDP buffer sizes for QUIC
       # See https://github.com/quic-go/quic-go/wiki/UDP-Buffer-Sizes
       boot.kernel.sysctl = {
