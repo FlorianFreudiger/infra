@@ -6,10 +6,12 @@
       # Use nftables instead of iptables
       networking.nftables.enable = true;
 
-      # Mullvad DNS with Ads, Trackers and Malware blocking
+      # Quad9 DNS with Malware blocking
       networking.nameservers = [
-        "194.242.2.4#base.dns.mullvad.net"
-        "2a07:e340::4#base.dns.mullvad.net"
+        "9.9.9.9#dns.quad9.net"
+        "149.112.112.112#dns.quad9.net"
+        "2620:fe::fe#dns.quad9.net"
+        "2620:fe::9#dns.quad9.net"
       ];
 
       # Use systemd DNS resolver daemon instead of resolvconf
@@ -17,6 +19,11 @@
         enable = true;
         settings.Resolve = {
           DNSOverTLS = "true";
+
+          # Prefer global DNS servers over per-link ones (e.g. from DHCP), which are otherwise queried in parallel
+          # Only more specific domains (e.g. DHCP search domains, Tailscale) use per-link servers
+          Domains = [ "~." ];
+
           FallbackDNS = [
             # Cloudflare
             "1.1.1.1#one.one.one.one"

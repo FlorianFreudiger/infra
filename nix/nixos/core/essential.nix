@@ -27,6 +27,9 @@
         ncdu
         fastfetch
         jq
+        _7zz
+        (linkFarm "7zz-as-7z" { "bin/7z" = lib.getExe _7zz; }) # 7z -> 7zz
+        unar
 
         # Administration
         gptfdisk

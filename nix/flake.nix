@@ -36,7 +36,7 @@
     };
 
     nixpkgs-kopia = {
-      url = "github:efficacy38/nixpkgs/7ae5970634a00b96ee407e9e426641bdfc182a25";
+      url = "github:efficacy38/nixpkgs/fc76e9d4f6bd8ecc9868011542e990218ac0d8fc";
       flake = false;
     };
 

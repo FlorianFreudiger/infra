@@ -15,27 +15,65 @@
           content = ''
             # Global directories and files
             .cache
+            .gradle
+            .mypy_cache
+            .venv
+            __pycache__
+            node_modules
             *.tmp
             *.bak
             [Dd]esktop.ini
 
+            Code Cache
+            CacheStorage
+            GPU*Cache
+            *Dawn*Cache
+            *ShaderCache
+
             # Home directories
-            */.gradle
+            **/PrismLauncher/assets
+            **/PrismLauncher/cache
+            **/PrismLauncher/java
+            **/PrismLauncher/libraries
+            **/PrismLauncher/meta
+            */.config/*/Cache
+            */.config/Code/Cached*
+            */.config/Code/logs
+            */.config/heroic/images-cache
+            */.config/heroic/store_cache
+            */.config/heroic/tools
+            */.config/syncthing/index-*
+            */.config/zen/*/storage/default/*/cache
+            */.jdks
             */.konan
             */.m2
             */.npm
+            */.vscode/extensions
             */.vscode-server
             */.vscode-remote-containers
             */.local/lib
+            */.local/share/baloo
             */.local/share/flatpak
-            */.local/share/Steam/appcache
-            */.local/share/Steam/depotcache
+            */.local/share/JetBrains/Toolbox/apps
+            */.local/share/Steam/*
+            !*/.local/share/Steam/config
+            !*/.local/share/Steam/steamapps
+            !*/.local/share/Steam/userdata
+            */.local/share/Steam/config/htmlcache
             */.local/share/Steam/steamapps/common
             */.local/share/Steam/steamapps/downloading
             */.local/share/Steam/steamapps/shadercache
             */.local/share/Steam/steamapps/temp
             */.local/share/Steam/steamapps/workshop
             */.local/share/Trash
+            */.local/share/umu
+            */.local/share/uv/python
+            */.local/share/uv/tools
+            */.local/state/Heroic/logs
+            */.local/state/syncthing/index-*
+            */.var/app/*/cache
+            */Games/Heroic/*
+            !*/Games/Heroic/Prefixes
             */go
             */snap
           '';
@@ -75,49 +113,69 @@
             KOPIA_SERVER_FINGERPRINT="$(cat "$KOPIA_SERVER_FINGERPRINT_FILE")"
             exec kopia repository connect server --server-cert-fingerprint "$KOPIA_SERVER_FINGERPRINT" "$@"
           elif [ "$#" -ge 3 ] && [ "$1" = "repository" ] && [ "$2" = "create" ] && [ "$3" = "webdav" ]; then
+            # The module only creates a repository after connecting failed, so fail to let the unit be retried
             echo "[wrapper] Caught \"kopia repository create webdav ...\", not needed for kopia-servers."
+            echo "[wrapper] Failing since this only happens when connecting to the server failed." >&2
+            exit 1
           else
             exec kopia "$@"
           fi
         '';
       };
 
-      dailyBackupEnabled = lib.hasAttrByPath [
+      automaticBackupEnabled = lib.hasAttrByPath [
         "age"
         "secrets"
         "kopia-password-${config.networking.hostName}"
       ] config;
     in
     {
-      imports = [
-        "${inputs.nixpkgs-kopia}/nixos/modules/services/backup/kopia"
+      imports = map (file: "${inputs.nixpkgs-kopia}/nixos/modules/services/backup/kopia/${file}") [
+        "default.nix"
+        "policy-service.nix"
+        "repository-service.nix"
+        "snapshot-service.nix"
+        "web-service.nix"
       ];
 
       services.kopia = {
         package = kopiaButConnectToServerInsteadOfWebdav;
 
-        backups.daily = lib.mkIf dailyBackupEnabled {
+        backups.automatic = lib.mkIf automaticBackupEnabled {
           repository.webdav = {
             urlFile = config.age.secrets.kopia-url.path;
           };
 
           passwordFile = lib.mkDefault config.age.secrets."kopia-password-${config.networking.hostName}".path;
 
-          paths = [
-            "/home"
-            "/srv"
-          ];
-
-          timerConfig = {
-            OnCalendar = "*-*-* 04:00:00";
-            Persistent = true;
-          };
+          snapshots =
+            let
+              mkTimer = onCalendar: {
+                enable = true;
+                options = {
+                  OnCalendar = onCalendar;
+                  RandomizedDelaySec = "10min"; # Spread load on kopia server from different hosts
+                  FixedRandomDelay = true;
+                  Persistent = true;
+                };
+              };
+            in
+            {
+              home = {
+                path = "/home";
+                timer = mkTimer "*-*-* 02/4:45:00"; # Run every 4 hours: 02:45, 06:45, ..., 22:45
+              };
+              srv = {
+                path = "/srv";
+                timer = mkTimer "*-*-* *:15:00"; # Run every hour: 00:15, 01:15, ..., 23:15
+              };
+            };
         };
       };
 
-      warnings =
-        lib.optional (!dailyBackupEnabled)
-          "Automatic Kopia backup is disabled because no host-specific Kopia password is configured!";
+      warnings = lib.optional (
+        !automaticBackupEnabled
+      ) "Automatic Kopia backup is disabled because no host-specific Kopia password is configured!";
 
       age.secrets.kopia-url = {
         rekeyFile = self + "/secrets/master/kopia-url.age";
@@ -137,11 +195,11 @@
       # Add wrapper script to run kopia with the right repository config
       environment.systemPackages = [
         (pkgs.writeShellApplication {
-          name = "kopia-daily";
+          name = "kopia-automatic";
           runtimeInputs = [ kopiaButConnectToServerInsteadOfWebdav ];
           text = ''
             #!/bin/sh
-            export KOPIA_CONFIG_PATH=/var/lib/kopia/daily/repository.config
+            export KOPIA_CONFIG_PATH=/var/lib/kopia/automatic/repository.config
             exec kopia "$@"
           '';
         })

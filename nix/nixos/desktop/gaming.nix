@@ -16,6 +16,13 @@
       environment.systemPackages = with pkgs; [
         protonup-qt
         steam-run
+
+        (heroic.override {
+          extraPkgs =
+            pkgs: with pkgs; [
+              gamemode
+            ];
+        })
       ];
 
       # Enable 32-bit graphics support
@@ -42,8 +49,23 @@
         ];
       };
 
-      # Skip the daily upgrade while a Steam game runs (Steam starts every game under `reaper`)
-      systemd.services.nixos-upgrade.serviceConfig.ExecCondition =
-        pkgs.writeShellScript "no-steam-game" "! ${pkgs.procps}/bin/pgrep -x reaper";
+      # Skip some automated tasks while a game runs
+      # - Steam starts every game under `reaper`
+      # - Heroic runs Epic games through Wine/Proton, which keeps a `wineserver` alive
+      # - PrismLauncher starts Minecraft as `java ... org.prismlauncher.EntryPoint`
+      systemd.services =
+        lib.genAttrs
+          [
+            "nixos-upgrade"
+            "nix-gc"
+          ]
+          (_: {
+            serviceConfig.ExecCondition = [
+              (pkgs.writeShellScript "no-game-running" ''
+                ! ${pkgs.procps}/bin/pgrep -x 'reaper|wineserver' &&
+                ! ${pkgs.procps}/bin/pgrep -f 'org\.prismlauncher\.EntryPoint'
+              '')
+            ];
+          });
     };
 }

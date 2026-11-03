@@ -44,6 +44,7 @@
         # Browser and app sessions
         "~/.config/chromium"
         "~/.config/discord"
+        "~/.config/zen"
         "~/.mozilla"
         "~/.zen"
       ];

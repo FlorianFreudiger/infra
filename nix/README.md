@@ -41,6 +41,7 @@ which are then combined to form multiple final system configurations for the dif
 | :---: | :--- |
 | [Desktop Environment](./nixos/desktop/desktop-environment.nix) | Setup KDE and standard apps |
 | [Extra App Formats](./nixos/desktop/extra-app-formats.nix) | Support AppImages, Flatpaks and more unpatched apps |
+| [Gaming](./nixos/desktop/gaming.nix) | Setup Steam, Heroic, and [Feral gamemode](https://github.com/FeralInteractive/gamemode) |
 | [Secure Boot](./nixos/desktop/secure-boot.nix) | Switch to Lanzaboote bootloader and enable TPM2 support |
 
 #### Profiles
