@@ -46,6 +46,12 @@
             inputs.nixpkgs-unstable.legacyPackages.${pkgs.stdenv.hostPlatform.system}.nbfc-linux
           ];
           boot.extraModulePackages = [ config.boot.kernelPackages.acpi_call ];
+
+          # Dedicated browser for captive portals, as DNS-over-TLS can break them
+          programs.captive-browser = {
+            enable = true;
+            interface = "wlo1";
+          };
         }
       )
 

@@ -13,12 +13,11 @@
         daemon.settings = {
           # Keep containers running when the daemon is restarted, e.g. for updates
           live-restore = true;
+
+          # Enable nftables support if used
+          firewall-backend = lib.mkIf config.networking.nftables.enable "nftables";
         };
-      }
-      # Enable nftables support if used
-      // lib.optionalAttrs config.networking.nftables.enable {
-        daemon.settings.firewall-backend = "nftables";
-        extraPackages = [ pkgs.nftables ];
+        extraPackages = lib.mkIf config.networking.nftables.enable [ pkgs.nftables ];
       };
 
       # Extra packages for container management

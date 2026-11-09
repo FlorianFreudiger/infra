@@ -1,4 +1,4 @@
-# SSH client configuration for YubiKeys
+# SSH YubiKey sync, adds to base ssh client config
 # Enroll YubiKey ssh keys on each host once,
 # then when a YubiKey is plugged in, the service will
 # 1. Link the plugged-in YubiKey's keys into ~/.ssh/yubikeys/active
@@ -6,7 +6,7 @@
 
 { ... }:
 {
-  flake.homeModules.ssh-client =
+  flake.homeModules.ssh-yubikey =
     { lib, pkgs, ... }:
     let
       git-forges = [
@@ -16,22 +16,17 @@
       ];
     in
     {
-      programs.ssh = {
-        enable = true;
-        enableDefaultConfig = false;
+      programs.ssh.settings = {
+        yubikey-login = {
+          header = "Host * ${lib.concatMapStringsSep " " (forge: "!${forge}") git-forges}";
+          IdentitiesOnly = true;
+          IdentityFile = "~/.ssh/yubikeys/active/id_ed25519_sk_rk_login_%u";
+        };
 
-        settings = {
-          yubikey-login = {
-            header = "Host * ${lib.concatMapStringsSep " " (forge: "!${forge}") git-forges}";
-            IdentitiesOnly = true;
-            IdentityFile = "~/.ssh/yubikeys/active/id_ed25519_sk_rk_login_%u";
-          };
-
-          yubikey-git = {
-            header = "Host ${lib.concatStringsSep " " git-forges}";
-            IdentitiesOnly = true;
-            IdentityFile = "~/.ssh/yubikeys/active/id_ed25519_sk_rk_git_%u";
-          };
+        yubikey-git = {
+          header = "Host ${lib.concatStringsSep " " git-forges}";
+          IdentitiesOnly = true;
+          IdentityFile = "~/.ssh/yubikeys/active/id_ed25519_sk_rk_git_%u";
         };
       };
 

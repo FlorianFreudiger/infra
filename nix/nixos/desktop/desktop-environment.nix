@@ -51,6 +51,17 @@
 
         # Other tools
         age-plugin-yubikey # Age plugin for YubiKey support
+
+        # Open Windows .url shortcuts in the default browser
+        (makeDesktopItem {
+          name = "open-url-file";
+          desktopName = "Internet Shortcut";
+          exec = "${writeShellScript "open-url-file" ''
+            xdg-open "$(grep -m1 -oP '^URL=\Khttps?://[^\r]+' "$1")"
+          ''} %f";
+          mimeTypes = [ "application/x-mswinurl" ];
+          noDisplay = true;
+        })
       ];
 
       # Connect to phone and other devices, will open ports in firewall
