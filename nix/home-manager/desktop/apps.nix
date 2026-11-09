@@ -16,7 +16,6 @@
           fetchzip = a: fetchzip (a // { url = lib.replaceStrings [ "-cdn" ] [ "" ] a.url; });
         })
         signal-desktop
-        vscode
       ];
 
       programs.discord = {
@@ -29,6 +28,24 @@
       services.tailscale-systray = {
         enable = true;
         theme = "light:nobg";
+      };
+
+      programs.zed-editor = {
+        enable = true;
+
+        # Language home-modules will add the extensions themselves
+        extensions = [
+          "git-firefly"
+        ];
+
+        userSettings = {
+          # General
+          auto_update = false;
+          telemetry = {
+            metrics = false;
+            anthropic_retention = false;
+          };
+        };
       };
     };
 }
