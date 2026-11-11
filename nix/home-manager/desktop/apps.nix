@@ -35,6 +35,8 @@
 
         # Language home-modules will add the extensions themselves
         extensions = [
+          "catppuccin"
+          "catppuccin-icons"
           "git-firefly"
         ];
 

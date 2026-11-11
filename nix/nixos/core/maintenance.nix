@@ -25,6 +25,8 @@
           "nixpkgs"
           "--update-input"
           "nixpkgs-unstable"
+          "--update-input"
+          "nixpkgs-unstable-small"
         ]
         ++ lib.optionals (options ? home-manager) [
           "--update-input"

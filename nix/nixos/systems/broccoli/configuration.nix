@@ -5,6 +5,7 @@
     modules = [
       # Import specific nixos profile
       self.nixosModules.desktop
+      self.nixosModules.ryujin
 
       # Host specific configuration
       (
@@ -68,12 +69,14 @@
             "noatime"
           ];
 
-          ## GPU configuration ##
           nixpkgs.config.allowUnfreePackages = [
             "nvidia-kernel-modules"
             "nvidia-settings"
             "nvidia-x11"
+            "wootility"
           ];
+
+          ## GPU configuration ##
           hardware.graphics.enable = true;
           services.xserver.videoDrivers = [ "nvidia" ];
           hardware.nvidia = {
@@ -82,6 +85,14 @@
             # Power management through systemd
             powerManagement.enable = true;
           };
+
+          hardware.wooting.enable = true;
+          # Stable wootility can't manage the keyboard's newer firmware
+          nixpkgs.overlays = [
+            (final: prev: {
+              wootility = prev.callPackage "${inputs.nixpkgs-unstable}/pkgs/by-name/wo/wootility/package.nix" { };
+            })
+          ];
         }
       )
     ];

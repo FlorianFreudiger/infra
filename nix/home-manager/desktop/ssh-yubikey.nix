@@ -78,7 +78,7 @@
             dir=~/.ssh/yubikeys/$serial
 
             # Replace old stubs with new ones
-            ssh-add -qd "$dir"/*.pub 2>/dev/null || true
+            ssh-add -qd "$dir"/*.pub &>/dev/null || true
             rm -rf "$dir"
             mkdir -p "$dir"
             cd "$dir"
@@ -131,12 +131,12 @@
                   else
                     rm -f active
                   fi
-                  [[ -n $old ]] && ssh-add -qd "$old"/*.pub 2>/dev/null
+                  [[ -n $old ]] && ssh-add -qd "$old"/*.pub &>/dev/null
                 }
 
                 # After start, update once, then wait for plugged-in events
                 while [[ ! -S $SSH_AUTH_SOCK ]]; do sleep 0.2; done
-                ssh-add -qd active/*.pub 2>/dev/null
+                ssh-add -qd active/*.pub &>/dev/null
                 rm -f active
                 update
                 udevadm monitor --udev --subsystem-match=hidraw | while read -r event; do

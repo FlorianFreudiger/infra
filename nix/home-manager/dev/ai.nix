@@ -1,7 +1,12 @@
 { inputs, ... }:
 {
   flake.homeModules.dev-ai =
-    { pkgs, lib, ... }:
+    {
+      config,
+      pkgs,
+      lib,
+      ...
+    }:
     let
       deny-credential-files = [
         # Tokens
@@ -131,6 +136,8 @@
             "Never switch, add to boot, or apply a NixOS configuration."
             "Never run \"wsl.exe\", directly or through another program."
 
+            "Never send, schedule or trigger a message to any person other than the user, through any channel (email, chat or messenger, SMS, calendar invite, share or mention notification) and by any means (MCP tool, CLI, API, browser), even if the user asks for it. Only prepare a draft for the user to send themselves."
+
             # Try to avoid sandbox escapes through excluded commands
             "Never chain shell commands after a \"nix\" command."
             "Never use the \"nix\" command to run another unrelated command."
@@ -191,11 +198,46 @@
 
         timeFormat = "24-hour";
         cleanupPeriodDays = 180; # Increase session lifetime from the default of 30 days
+
+        statusLine = {
+          type = "command";
+          command = "${unstable.claude-powerline}/bin/claude-powerline --config=${claude-powerline-config}";
+          refreshInterval = 10; # Seconds, so the cache timer keeps counting while idle
+        };
       };
 
-      unstable = import inputs.nixpkgs-unstable {
+      claude-powerline-config = pkgs.writeText "claude-powerline.json" ''
+        {
+          "theme": "rose-pine",
+          "display": {
+            "widthReserve": 0,
+            "lines": [
+              {
+                "segments": {
+                  "model": { "enabled": true },
+                  "block": { "enabled": true, "displayStyle": "blocks" },
+                  "weekly": { "enabled": true, "displayStyle": "blocks" },
+                  "cacheTimer": { "enabled": true, "displayMode": "remaining" },
+                  "context": { "enabled": true, "displayStyle": "squares", "showPercentageOnly": true }
+                }
+              }
+            ]
+          }
+        }
+      '';
+
+      unstable = inputs.nixpkgs-unstable.legacyPackages.${pkgs.stdenv.hostPlatform.system};
+      unstable-small = import inputs.nixpkgs-unstable-small {
         inherit (pkgs.stdenv.hostPlatform) system;
         config.allowUnfreePackages = [ "claude-code" ];
+      };
+
+      claude-plugins-official = pkgs.fetchFromGitHub {
+        owner = "anthropics";
+        repo = "claude-plugins-official";
+        rev = "ea686bae367e20a4092b2fd4327ffd299bb60f24";
+        sparseCheckout = [ "plugins/security-guidance" ];
+        hash = "sha256-f4Yo8tonQ7Rg8C6ZL8bwxTP09aQSuEfUj3/owM2Ktyg=";
       };
     in
     {
@@ -205,16 +247,64 @@
         # instead of writing user settings, since the latter would make the file read-only.
         package = pkgs.symlinkJoin {
           name = "claude-code-wrapped";
-          # Pull claude-code from unstable nixpkgs to get more up to date versions
-          paths = [ unstable.claude-code ];
+
+          # Pull claude-code from nixos-unstable-small, which can get updates even sooner than nixos-unstable
+          paths = [ unstable-small.claude-code ];
+
           nativeBuildInputs = [ pkgs.makeWrapper ];
+          # --run: Refuse a second --settings flag, since it would replace the settings from here
+          # SG_AGENTIC_CLI_PATH: Set the path to the claude binary for the security-guidance plugin
+          # --suffix PATH: node for ponytail's hooks
           postBuild = ''
             wrapProgram $out/bin/claude \
+              --run 'for arg in "$@"; do case $arg in --) break;; --settings | --settings=*) echo "claude: refusing --settings, it would replace the nix settings" >&2; exit 1;; esac; done' \
               --add-flags "--settings ${claude-settings}" \
               --add-flags "--append-system-prompt-file ${claude-sandbox-prompt}" \
-              --set DISABLE_TELEMETRY 1
+              --set DISABLE_TELEMETRY 1 \
+              --set SG_AGENTIC_CLI_PATH $out/bin/claude \
+              --suffix PATH : ${pkgs.nodejs-slim}/bin
           '';
         };
+
+        plugins = [
+          # Security guidance plugin, automatically reviews generated code.
+          # Precompiled, since python can't write its bytecode cache into the store.
+          (pkgs.runCommand "security-guidance" { } ''
+            cp -r --no-preserve=mode ${claude-plugins-official}/plugins/security-guidance $out
+            ${pkgs.python3}/bin/python3 -m compileall -q --invalidation-mode unchecked-hash $out/hooks
+          '')
+
+          # Ponytail without its band and board
+          (pkgs.runCommand "ponytail"
+            {
+              nativeBuildInputs = [ pkgs.jq ];
+              src = pkgs.fetchFromGitHub {
+                owner = "DietrichGebert";
+                repo = "ponytail";
+                rev = "96608e078b2d5ea607c5c3b8b5a54d1c1fba6846";
+                # Only the parts that claude loads
+                sparseCheckout = [
+                  ".claude-plugin"
+                  "hooks"
+                  "skills"
+                ];
+                hash = "sha256-qNs6f1mbo96bzID+WeiBgJ808K/GKSethnioGY0c7HM=";
+              };
+            }
+            ''
+              cp -r --no-preserve=mode $src $out
+              rm -r $out/hooks/band $out/hooks/claude-band.json $out/hooks/ponytail-band-import.js
+              jq 'del(.userConfig, .types) | .hooks -= ["./hooks/claude-band.json"]' \
+                $src/.claude-plugin/plugin.json > $out/.claude-plugin/plugin.json
+            ''
+          )
+        ];
+      };
+
+      # Let Zed use the wrapped claude instead of the one bundled with it for the sandbox, etc.
+      programs.zed-editor.userSettings.agent_servers.claude-acp = {
+        type = "registry";
+        env.CLAUDE_CODE_EXECUTABLE = lib.getExe' config.programs.claude-code.finalPackage "claude";
       };
     };
 }
