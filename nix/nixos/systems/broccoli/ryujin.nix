@@ -40,6 +40,12 @@
           # Also covers the AIO not being enumerated yet, or vanishing on USB reset
           Restart = "always";
           RestartSec = 5;
+
+          # Restrict service privileges
+          ProtectSystem = "strict";
+          ProtectHome = true;
+          PrivateNetwork = true;
+          NoNewPrivileges = true;
         };
       };
     };

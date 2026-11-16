@@ -10,7 +10,6 @@
       ];
 
       home.packages = with pkgs; [
-        keepassxc
         (jetbrains-toolbox.override {
           # Fix download link
           fetchzip = a: fetchzip (a // { url = lib.replaceStrings [ "-cdn" ] [ "" ] a.url; });
@@ -25,28 +24,28 @@
 
       programs.ghostty.enable = true;
 
-      services.tailscale-systray = {
-        enable = true;
-        theme = "light:nobg";
-      };
+      services.tailscale-systray.enable = true;
 
       programs.zed-editor = {
         enable = true;
 
-        # Language home-modules will add the extensions themselves
+        # Language home-modules will add their extensions themselves
         extensions = [
-          "catppuccin"
-          "catppuccin-icons"
           "git-firefly"
+          "just"
         ];
 
         userSettings = {
           # General
           auto_update = false;
           telemetry = {
+            diagnostics = false;
             metrics = false;
             anthropic_retention = false;
           };
+
+          # Window & Layout
+          title_bar.show_sign_in = false;
         };
       };
     };

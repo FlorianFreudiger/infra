@@ -9,6 +9,7 @@
         self.homeModules.browser
         self.homeModules.sync
         self.homeModules.ssh-yubikey
+        self.homeModules.theming
       ];
     };
 }

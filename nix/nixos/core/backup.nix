@@ -117,6 +117,17 @@
             echo "[wrapper] Caught \"kopia repository create webdav ...\", not needed for kopia-servers."
             echo "[wrapper] Failing since this only happens when connecting to the server failed." >&2
             exit 1
+
+          # Drop the "--override-source=" flag, which causes an error when the server does not allow writing source policy
+          elif [ "$#" -ge 2 ] && [ "$1" = "snapshot" ] && [ "$2" = "create" ]; then
+            args=()
+            for arg in "$@"; do
+              case "$arg" in
+                --override-source=*) echo "[wrapper] Dropping \"$arg\"." ;;
+                *) args+=("$arg") ;;
+              esac
+            done
+            exec kopia "''${args[@]}"
           else
             exec kopia "$@"
           fi

@@ -53,6 +53,7 @@
       # - Steam starts every game under `reaper`
       # - Heroic runs Epic games through Wine/Proton, which keeps a `wineserver` alive
       # - PrismLauncher starts Minecraft as `java ... org.prismlauncher.EntryPoint`
+      # But ignore skip if system is out of date
       systemd.services =
         lib.genAttrs
           [
@@ -62,8 +63,10 @@
           (_: {
             serviceConfig.ExecCondition = [
               (pkgs.writeShellScript "no-game-running" ''
-                ! ${pkgs.procps}/bin/pgrep -x 'reaper|wineserver' &&
-                ! ${pkgs.procps}/bin/pgrep -f 'org\.prismlauncher\.EntryPoint'
+                [ -n "$(${pkgs.findutils}/bin/find /nix/var/nix/profiles/system -mtime +3)" ] || {
+                  ! ${pkgs.procps}/bin/pgrep -x 'reaper|wineserver' &&
+                  ! ${pkgs.procps}/bin/pgrep -f 'org\.prismlauncher\.EntryPoint'
+                }
               '')
             ];
           });

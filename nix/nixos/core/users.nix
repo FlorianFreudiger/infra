@@ -73,7 +73,8 @@
             lib.concatStrings (
               lib.mapAttrsToList (name: user: ''
                 if [ -s ${lib.escapeShellArg user.hashedPasswordFile} ]; then
-                  ${pkgs.shadow}/bin/usermod --password "$(< ${lib.escapeShellArg user.hashedPasswordFile})" ${lib.escapeShellArg name}
+                  printf '%s:%s\n' ${lib.escapeShellArg name} "$(< ${lib.escapeShellArg user.hashedPasswordFile})" \
+                    | ${pkgs.shadow}/bin/chpasswd --encrypted
                 fi
               '') enforcedPasswordUsers
             )

@@ -2,6 +2,7 @@
 # - Lanzaboote: Secure Boot for NixOS
 # - TPM2 support and automatic LUKS unlock
 # - LUKS tuning for SSDs (bypass workqueues, TRIM passthrough)
+# - Enable intel IOMMU to prevent DMA attacks
 # - Script to enroll LUKS keys into the TPM
 
 { inputs, ... }:
@@ -19,45 +20,56 @@
         inputs.lanzaboote.nixosModules.lanzaboote
       ];
 
-      # Lanzaboote currently replaces the systemd-boot module.
-      # This setting is usually set to true in configuration.nix
-      # generated at installation time. So we force it to false
-      # for now.
-      boot.loader.systemd-boot.enable = lib.mkForce false;
-      boot.loader.efi.canTouchEfiVariables = true;
+      boot = {
+        # Lanzaboote currently replaces the systemd-boot module.
+        # This setting is usually set to true in configuration.nix
+        # generated at installation time. So we force it to false for now.
+        loader = {
+          systemd-boot.enable = lib.mkForce false;
+          efi.canTouchEfiVariables = true;
+        };
 
-      boot.lanzaboote = {
-        enable = true;
-        pkiBundle = "/var/lib/sbctl";
+        lanzaboote = {
+          enable = true;
+          pkiBundle = "/var/lib/sbctl";
 
-        autoGenerateKeys.enable = true;
-        autoEnrollKeys.enable = true;
+          autoGenerateKeys.enable = true;
+          autoEnrollKeys.enable = true;
 
-        # Assess boot entries by counting tries before marking as good or bad
-        bootCounting.initialTries = 3;
+          # Assess boot entries by counting tries before marking as good or bad
+          bootCounting.initialTries = 3;
 
-        # Limit number of boot entries in order to avoid filling up the ESP
-        configurationLimit = 8;
-      };
+          # Limit number of boot entries in order to avoid filling up the ESP
+          configurationLimit = 8;
+        };
 
-      ## TPM2 support ##
-      boot.initrd.systemd.enable = true;
-      boot.initrd.systemd.tpm2.enable = true;
-
-      # Configure the root LUKS device if root is on cryptroot
-      boot.initrd.luks.devices.cryptroot =
-        lib.mkIf (config.fileSystems."/".device or null == "/dev/mapper/cryptroot")
-          {
-            # Enable automatic unlock via TPM2
-            crypttabExtraOpts = [
-              "tpm2-device=auto"
-              "tpm2-measure-pcr=yes"
-            ];
-            # Disabling dm-crypt workqueues improves performance on SSDs
-            bypassWorkqueues = lib.mkIf (config.infra.hostFacts.rootDrive.isSSD == true) true;
-            # Pass TRIM through to the drive, if supported
-            allowDiscards = lib.mkIf (config.infra.hostFacts.rootDrive.supportsTrim == true) true;
+        initrd = {
+          ## TPM2 support ##
+          systemd = {
+            enable = true;
+            tpm2.enable = true;
           };
+
+          # Configure the root LUKS device if root is on cryptroot
+          luks.devices.cryptroot =
+            lib.mkIf (config.fileSystems."/".device or null == "/dev/mapper/cryptroot")
+              {
+                # Enable automatic unlock via TPM2
+                crypttabExtraOpts = [
+                  "tpm2-device=auto"
+                  "tpm2-measure-pcr=yes"
+                ];
+                # Disabling dm-crypt workqueues improves performance on SSDs
+                bypassWorkqueues = lib.mkIf (config.infra.hostFacts.rootDrive.isSSD == true) true;
+                # Pass TRIM through to the drive, if supported
+                allowDiscards = lib.mkIf (config.infra.hostFacts.rootDrive.supportsTrim == true) true;
+              };
+        };
+
+        # Enable intel IOMMU to try to prevent DMA attacks
+        # Ignored on AMD CPUs or if unsupported
+        kernelParams = [ "intel_iommu=on" ];
+      };
 
       security.tpm2 = {
         enable = true;

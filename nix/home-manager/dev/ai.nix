@@ -71,8 +71,10 @@
 
         # Diagnostics that require dbus or netns
         # No wildcards so they can not be used to chain commands.
+        "bootctl status --no-pager"
         "hostnamectl"
         "ip -br addr"
+        "ip -br link"
         "ip route"
         "loginctl"
         "loginctl list-sessions --no-pager"
@@ -144,6 +146,7 @@
             "Never use unsafe options of the \"nix\" command, such as \"allow-unsafe-native-code-during-evaluation\"."
             "Never pass \"--impure\", \"--expr\", \"--file\", \"-f\" or \"--option\" to a \"nix\" command."
             "Never add flake inputs, \"builtins.path\" or \"builtins.fetchTree\" references that point at local paths outside the repository."
+            "Never pass \"--write-to\", \"--out-link\", \"-o\", \"--profile\", \"--override-input\", \"--store\" or \"--eval-store\" to a \"nix\" command, and never give it a \"path:\" reference or a directory outside /etc/nixos."
           ];
         };
 

@@ -30,6 +30,8 @@
 
             home.username = "turtle";
             home.homeDirectory = "/home/turtle";
+
+            catppuccin.flavor = "latte";
           };
 
           # Kopia credentials

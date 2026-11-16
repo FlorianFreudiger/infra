@@ -47,6 +47,7 @@
         kdePackages.qrca # QR code scanner and generator
         kdePackages.spectacle # Screenshot tool
         kdiff3 # File/directory comparison tool
+        keepassxc # Password manager, keep as system package as it ships polkit action
         vlc # Media player
 
         # Other tools

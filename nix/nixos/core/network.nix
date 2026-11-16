@@ -34,6 +34,9 @@
         };
       };
 
+      # If NetworkManager is used, do not require DoT for DNS servers handed out by networks
+      networking.networkmanager.connectionConfig."connection.dns-over-tls" = 0;
+
       services.tailscale = {
         enable = true;
         # Devices are registered manually with `tailscale up`
