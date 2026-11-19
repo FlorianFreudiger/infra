@@ -71,6 +71,18 @@
             "noatime"
           ];
 
+          fileSystems."/mnt/optane" = {
+            device = "/dev/disk/by-uuid/C42E-4A0A";
+            fsType = "exfat";
+            options = [
+              "uid=1000"
+              "gid=100"
+              "umask=0077"
+              "noatime"
+              "nofail"
+            ];
+          };
+
           nixpkgs.config.allowUnfreePackages = [
             "nvidia-kernel-modules"
             "nvidia-settings"

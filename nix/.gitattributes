@@ -1,0 +1,2 @@
+# Keep text with LF line endings to not break shell scripts
+* text=auto eol=lf

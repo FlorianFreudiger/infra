@@ -47,8 +47,10 @@
         "~/.local/share/kwalletd"
 
         # Browser and app sessions
+        "~/.cache/zen"
         "~/.config/chromium"
         "~/.config/discord"
+        "~/.config/Signal"
         "~/.config/zen"
         "~/.mozilla"
         "~/.zen"
@@ -72,6 +74,8 @@
         # Diagnostics that require dbus or netns
         # No wildcards so they can not be used to chain commands.
         "bootctl status --no-pager"
+        "fwupdmgr get-updates --json"
+        "fwupdmgr security --json"
         "hostnamectl"
         "ip -br addr"
         "ip -br link"
@@ -83,6 +87,14 @@
         "nvidia-smi"
         "powerprofilesctl"
         "resolvectl status"
+        "ss -tulpn"
+        "sysctl --all --pattern conf.all"
+        "sysctl --all --pattern conf.default"
+        "sysctl --all --pattern ^net.core"
+        "sysctl --all --pattern ^net.ipv4.icmp"
+        "sysctl --all --pattern ^net.ipv4.ip"
+        "sysctl --all --pattern ^net.ipv4.tcp"
+        "sysctl --all --pattern ^net.ipv6.icmp"
         "systemctl --failed --no-pager"
         "systemctl list-timers --no-pager"
         "systemctl list-timers --all --no-pager"
@@ -90,7 +102,11 @@
         "systemctl list-units --all --no-pager"
         "systemctl list-units --failed --no-pager"
         "systemctl list-unit-files --no-pager"
+        "systemctl --user --failed --no-pager"
+        "systemctl --user list-units --no-pager"
         "systemd-analyze blame --no-pager"
+        "systemd-analyze security --no-pager"
+        "tailscale debug prefs"
         "tailscale status"
         "timedatectl"
       ];
@@ -207,6 +223,8 @@
           command = "${unstable.claude-powerline}/bin/claude-powerline --config=${claude-powerline-config}";
           refreshInterval = 10; # Seconds, so the cache timer keeps counting while idle
         };
+
+        idleCompaction = false;
       };
 
       claude-powerline-config = pkgs.writeText "claude-powerline.json" ''

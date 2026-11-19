@@ -10,7 +10,8 @@
       };
       programs.xwayland.enable = true;
 
-      # User defaults
+      ## User defaults
+      # Input and locale settings
       services.xserver.xkb.layout = "de";
       i18n.extraLocaleSettings.LC_TIME = "de_DE.UTF-8";
       environment.etc."xdg/kcminputrc".text = ''
@@ -21,6 +22,12 @@
         [Layout]
         LayoutList=de
         Use=true
+      '';
+
+      # Other
+      environment.etc."xdg/PlasmaUserFeedback".text = ''
+        [Global]
+        FeedbackLevel=0
       '';
 
       # Add RealtimeKit to allow PipeWire to acquire realtime scheduling priority
